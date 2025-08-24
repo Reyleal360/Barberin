@@ -1,0 +1,90 @@
+/* Login Page Styles */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 400px;
+}
+
+.role-selection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.role-selection .form-check {
+    margin-bottom: 0;
+    padding-left: 0;
+    display: flex;
+    align-items: center;
+}
+
+.role-selection .form-check-input {
+    margin-top: 0;
+    margin-right: var(--spacing-sm);
+    margin-left: 0;
+}
+
+.role-selection .form-check-label {
+    flex: 1;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.role-selection .form-check-input:checked + .form-check-label {
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
+}
+
+.role-selection .form-check-input:focus + .form-check-label {
+    box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25);
+}
+
+.illustration__circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        min-height: 60vh;
+        padding: var(--spacing-md) 0;
+    }
+    
+    .illustration__circle {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .illustration__icon {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        min-height: 50vh;
+    }
+    
+    .illustration__circle {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .illustration__icon {
+        font-size: 2rem;
+    }
+}

@@ -1,0 +1,126 @@
+/* Theme Variables - Doodle Rosa y Negro */
+:root {
+    /* Primary Colors */
+    --color-primary: #FF69B4; /* Hot Pink */
+    --color-primary-dark: #FF1493; /* Deep Pink */
+    --color-primary-light: #FFB6C1; /* Light Pink */
+    
+    /* Neutral Colors */
+    --color-black: #000000;
+    --color-dark-gray: #2F2F2F;
+    --color-gray: #5A5A5A;
+    --color-light-gray: #E0E0E0;
+    --color-white: #FFFFFF;
+    
+    /* Text Colors */
+    --color-text-primary: #000000;
+    --color-text-secondary: #2F2F2F;
+    --color-text-light: #5A5A5A;
+    --color-text-inverse: #FFFFFF;
+    
+    /* Background Colors */
+    --color-background: #F5F5F5;
+    --color-background-hover: #FFE4F1;
+    --color-background-card: #FFFFFF;
+    
+    /* Header and Footer */
+    --color-header-background: #000000;
+    --color-header-text: #FF69B4;
+    --color-footer-background: #2F2F2F;
+    --color-footer-text: #FFFFFF;
+    
+    /* Borders */
+    --color-border: #DDDDDD;
+    --color-border-dark: #AAAAAA;
+    
+    /* Status Colors */
+    --color-success: #4CAF50;
+    --color-warning: #FFC107;
+    --color-error: #F44336;
+    --color-info: #2196F3;
+    
+    /* Disabled State */
+    --color-disabled: #CCCCCC;
+    
+    /* Shadows */
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.1);
+    
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+    
+    /* Border Radius */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 16px;
+    
+    /* Doodle Style Elements */
+    --doodle-border: 2px dashed #FF69B4;
+    --doodle-shadow: 0 0 0 2px #FF69B4;
+    
+    /* Typography */
+    --font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-family-doodle: 'Comic Sans MS', 'Marker Felt', 'Arial Rounded MT Bold', cursive;
+    
+    /* Z-index */
+    --z-index-dropdown: 1000;
+    --z-index-sticky: 1020;
+    --z-index-fixed: 1030;
+    --z-index-modal-backdrop: 1040;
+    --z-index-modal: 1050;
+    --z-index-popover: 1060;
+    --z-index-tooltip: 1070;
+}
+
+/* Doodle Style Utilities */
+.doodle-border {
+    border: var(--doodle-border);
+    border-radius: var(--border-radius-md);
+}
+
+.doodle-shadow {
+    box-shadow: var(--doodle-shadow);
+}
+
+.doodle-text {
+    font-family: var(--font-family-doodle);
+}
+
+/* Theme Variations */
+[data-theme="dark"] {
+    --color-background: #1A1A1A;
+    --color-background-hover: #333333;
+    --color-background-card: #2A2A2A;
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: #E0E0E0;
+    --color-text-light: #AAAAAA;
+    --color-border: #444444;
+    --color-border-dark: #666666;
+}
+
+/* Responsive Text */
+@media (max-width: 768px) {
+    :root {
+        --spacing-xl: 1.5rem;
+        --spacing-xxl: 2rem;
+    }
+}
+
+/* Focus Styles for Accessibility */
+:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Selection Styles */
+::selection {
+    background-color: var(--color-primary-light);
+    color: var(--color-text-primary);
+}

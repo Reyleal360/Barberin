@@ -1,0 +1,182 @@
+/* Student Detail Page Styles */
+
+.student-detail-header {
+    margin-bottom: var(--spacing-xl);
+}
+
+.student-detail-title {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+}
+
+/* Info Items */
+.info-item {
+    margin-bottom: var(--spacing-md);
+}
+
+.info-item .form-label {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.info-value {
+    font-size: 1.1rem;
+    padding: var(--spacing-sm);
+    background-color: var(--color-light-gray);
+    border-radius: var(--border-radius-sm);
+    margin: 0;
+}
+
+/* Absence Cards */
+.absence-card {
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+}
+
+.absence-card:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+}
+
+.absence-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.absence-card__title {
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    margin: 0;
+}
+
+.absence-card__date {
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+}
+
+.absence-card__body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.absence-card__item {
+    margin-bottom: var(--spacing-sm);
+}
+
+.absence-card__label {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.875rem;
+}
+
+.absence-card__value {
+    font-size: 1rem;
+    padding: var(--spacing-xs);
+    background-color: var(--color-light-gray);
+    border-radius: var(--border-radius-sm);
+    margin: 0;
+}
+
+.absence-card__comments {
+    grid-column: 1 / -1;
+}
+
+.absence-card__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+}
+
+.absence-card__action-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.875rem;
+    border-radius: var(--border-radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.absence-card__action-btn--edit {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.absence-card__action-btn--edit:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.absence-card__action-btn--delete {
+    background-color: var(--color-error);
+    color: var(--color-white);
+}
+
+.absence-card__action-btn--delete:hover {
+    background-color: #d32f2f;
+}
+
+/* Type Badges */
+.badge--tardanza {
+    background-color: #ffeb3b;
+    color: #000;
+}
+
+.badge--justificada {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.badge--injustificada {
+    background-color: #f44336;
+    color: #fff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .student-detail-title {
+        font-size: 2rem;
+    }
+    
+    .absence-card__body {
+        grid-template-columns: 1fr;
+    }
+    
+    .absence-card__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .absence-card__date {
+        margin-top: var(--spacing-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .student-detail-title {
+        font-size: 1.75rem;
+    }
+    
+    .absence-card__actions {
+        flex-direction: column;
+    }
+    
+    .absence-card__action-btn {
+        width: 100%;
+    }
+}

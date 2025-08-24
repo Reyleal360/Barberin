@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - REPORTE DE FALTAS IEVE</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/views/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar__container">
+                <a href="admin-dashboard.html" class="navbar__brand">REPORTE DE FALTAS IEVE</a>
+                <ul class="navbar__menu">
+                    <li class="navbar__item">
+                        <a href="admin-dashboard.html" class="navbar__link navbar__link--active">Inicio</a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="report.html" class="navbar__link">Reportes</a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="#" class="navbar__link" data-logout>Cerrar Sesión</a>
+                    </li>
+                </ul>
+                <button class="navbar__toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        
+        <main class="main">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Panel de Administrador</h1>
+                <p class="dashboard-subtitle">Gestiona estudiantes y cursos</p>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="grid grid--cols-1 grid--tablet-cols-3 mb-lg">
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>👥</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Estudiantes</h3>
+                            <p class="stat-card__value" id="studentCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>📚</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Cursos</h3>
+                            <p class="stat-card__value" id="courseCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>📋</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Faltas Totales</h3>
+                            <p class="stat-card__value" id="absenceCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Students Section -->
+            <div class="grid grid--cols-1 grid--desktop-cols-2 mb-lg">
+                <div class="card card--doodle">
+                    <div class="card__header">
+                        <h2 class="card__title">Gestionar Estudiantes</h2>
+                    </div>
+                    <div class="card__body">
+                        <div class="flex flex--justify-between mb-md">
+                            <button id="addStudentBtn" class="btn btn--primary">Agregar Estudiante</button>
+                            <div class="search-box">
+                                <input type="text" id="studentSearch" class="form-control" placeholder="Buscar estudiantes...">
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="table table--striped" id="studentsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Curso</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentsTableBody">
+                                    <!-- Student rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Courses Section -->
+                <div class="card card--doodle">
+                    <div class="card__header">
+                        <h2 class="card__title">Gestionar Cursos</h2>
+                    </div>
+                    <div class="card__body">
+                        <div class="flex flex--justify-between mb-md">
+                            <button id="addCourseBtn" class="btn btn--primary">Agregar Curso</button>
+                            <div class="search-box">
+                                <input type="text" id="courseSearch" class="form-control" placeholder="Buscar cursos...">
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="table table--striped" id="coursesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Profesor</th>
+                                        <th>Horario</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="coursesTableBody">
+                                    <!-- Course rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p class="footer__text">Sistema de Reporte de Faltas IEVE &copy; 2025</p>
+        </footer>
+    </div>
+    
+    <!-- Student Modal -->
+    <div class="modal" id="studentModal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title" id="studentModalTitle">Agregar Estudiante</h3>
+                <button class="modal__close">&times;</button>
+            </div>
+            <div class="modal__body">
+                <form id="studentForm">
+                    <input type="hidden" id="studentId">
+                    <div class="form-group">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" id="studentName" class="form-control" placeholder="Ingresa el nombre completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="studentEmail" class="form-control" placeholder="Ingresa el email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Curso</label>
+                        <select id="studentCourse" class="form-control" required>
+                            <option value="">Selecciona un curso</option>
+                            <!-- Course options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Inscripción</label>
+                        <input type="date" id="studentEnrollmentDate" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" id="cancelStudentBtn">Cancelar</button>
+                <button class="btn btn--primary" id="saveStudentBtn">Guardar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Course Modal -->
+    <div class="modal" id="courseModal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title" id="courseModalTitle">Agregar Curso</h3>
+                <button class="modal__close">&times;</button>
+            </div>
+            <div class="modal__body">
+                <form id="courseForm">
+                    <input type="hidden" id="courseId">
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Curso</label>
+                        <input type="text" id="courseName" class="form-control" placeholder="Ingresa el nombre del curso" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Profesor</label>
+                        <input type="text" id="courseTeacher" class="form-control" placeholder="Ingresa el nombre del profesor" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Horario</label>
+                        <input type="text" id="courseSchedule" class="form-control" placeholder="Ingresa el horario" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" id="cancelCourseBtn">Cancelar</button>
+                <button class="btn btn--primary" id="saveCourseBtn">Guardar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/views/admin-dashboard.js"></script>
+</body>
+</html>

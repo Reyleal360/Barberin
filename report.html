@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - REPORTE DE FALTAS IEVE</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/views/report.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar__container">
+                <a href="#" class="navbar__brand">REPORTE DE FALTAS IEVE</a>
+                <ul class="navbar__menu">
+                    <li class="navbar__item">
+                        <a href="admin-dashboard.html" class="navbar__link">Inicio</a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="report.html" class="navbar__link navbar__link--active">Reportes</a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="#" class="navbar__link" data-logout>Cerrar Sesión</a>
+                    </li>
+                </ul>
+                <button class="navbar__toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        
+        <main class="main">
+            <div class="report-header">
+                <h1 class="report-title">Generar Reporte</h1>
+                <p class="report-subtitle">Filtra y genera reportes de faltas</p>
+            </div>
+            
+            <!-- Report Filters -->
+            <div class="card card--doodle mb-lg">
+                <div class="card__header">
+                    <h2 class="card__title">Filtros</h2>
+                </div>
+                <div class="card__body">
+                    <form id="reportForm">
+                        <div class="grid grid--cols-1 grid--tablet-cols-2 grid--desktop-cols-3">
+                            <div class="form-group">
+                                <label class="form-label">Fecha desde</label>
+                                <input type="date" id="dateFrom" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Fecha hasta</label>
+                                <input type="date" id="dateTo" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Curso</label>
+                                <select id="reportCourse" class="form-control">
+                                    <option value="">Todos los cursos</option>
+                                    <!-- Course options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Estudiante</label>
+                                <select id="reportStudent" class="form-control">
+                                    <option value="">Todos los estudiantes</option>
+                                    <!-- Student options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Tipo de Falta</label>
+                                <select id="reportType" class="form-control">
+                                    <option value="">Todas las faltas</option>
+                                    <option value="1">Tardanza</option>
+                                    <option value="2">Ausencia justificada</option>
+                                    <option value="3">Ausencia injustificada</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Situación</label>
+                                <select id="reportSituation" class="form-control">
+                                    <option value="">Todas las situaciones</option>
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="Resuelta">Resuelta</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn--primary">Generar Reporte</button>
+                            <button type="reset" class="btn btn--secondary ml-sm">Limpiar Filtros</button>
+                            <button type="button" class="btn btn--info ml-sm" id="printReportBtn">Imprimir</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Report Summary -->
+            <div class="card card--doodle mb-lg" id="reportSummary" style="display: none;">
+                <div class="card__header">
+                    <h2 class="card__title">Resumen del Reporte</h2>
+                </div>
+                <div class="card__body">
+                    <div class="grid grid--cols-1 grid--tablet-cols-4 mb-lg">
+                        <div class="stat-card">
+                            <div class="stat-card__icon bg-primary-light text-primary">
+                                <span>📋</span>
+                            </div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__title">Total de Faltas</h3>
+                                <p class="stat-card__value" id="totalAbsences">0</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card__icon bg-primary-light text-primary">
+                                <span>⏱️</span>
+                            </div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__title">Tardanzas</h3>
+                                <p class="stat-card__value" id="tardinessCount">0</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card__icon bg-primary-light text-primary">
+                                <span>✅</span>
+                            </div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__title">Justificadas</h3>
+                                <p class="stat-card__value" id="justifiedCount">0</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card__icon bg-primary-light text-primary">
+                                <span>❌</span>
+                            </div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__title">Injustificadas</h3>
+                                <p class="stat-card__value" id="unjustifiedCount">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chart placeholder -->
+                    <div class="chart-container mb-lg">
+                        <h3 class="text-center">Distribución de Faltas por Tipo</h3>
+                        <div class="chart-placeholder" id="absenceChart">
+                            <div class="chart-bar">
+                                <div class="chart-bar__label">Tardanzas</div>
+                                <div class="chart-bar__bar bg-warning" id="tardinessBar" style="width: 0%; height: 30px;"></div>
+                                <div class="chart-bar__value" id="tardinessValue">0</div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar__label">Justificadas</div>
+                                <div class="chart-bar__bar bg-success" id="justifiedBar" style="width: 0%; height: 30px;"></div>
+                                <div class="chart-bar__value" id="justifiedValue">0</div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-bar__label">Injustificadas</div>
+                                <div class="chart-bar__bar bg-error" id="unjustifiedBar" style="width: 0%; height: 30px;"></div>
+                                <div class="chart-bar__value" id="unjustifiedValue">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Report Table -->
+            <div class="card card--doodle" id="reportTable" style="display: none;">
+                <div class="card__header">
+                    <h2 class="card__title">Lista de Faltas</h2>
+                </div>
+                <div class="card__body">
+                    <div class="table-container">
+                        <table class="table table--striped" id="reportAbsencesTable">
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>Curso</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Categoría</th>
+                                    <th>Situación</th>
+                                    <th>Sanción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportAbsencesTableBody">
+                                <!-- Report rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p class="footer__text">Sistema de Reporte de Faltas IEVE &copy; 2025</p>
+        </footer>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/views/report.js"></script>
+</body>
+</html>

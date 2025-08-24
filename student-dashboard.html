@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Alumno - REPORTE DE FALTAS IEVE</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/views/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar__container">
+                <a href="student-dashboard.html" class="navbar__brand">REPORTE DE FALTAS IEVE</a>
+                <ul class="navbar__menu">
+                    <li class="navbar__item">
+                        <a href="student-dashboard.html" class="navbar__link navbar__link--active">Inicio</a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="#" class="navbar__link" data-logout>Cerrar Sesión</a>
+                    </li>
+                </ul>
+                <button class="navbar__toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        
+        <main class="main">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Panel de Alumno</h1>
+                <p class="dashboard-subtitle">Consulta tu información y faltas</p>
+            </div>
+            
+            <!-- Student Information -->
+            <div class="card card--doodle mb-lg">
+                <div class="card__header">
+                    <h2 class="card__title">Información Personal</h2>
+                </div>
+                <div class="card__body">
+                    <div class="grid grid--cols-1 grid--tablet-cols-2">
+                        <div class="info-item">
+                            <label class="form-label">Nombre:</label>
+                            <p id="studentName" class="info-value">-</p>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="form-label">Email:</label>
+                            <p id="studentEmail" class="info-value">-</p>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="form-label">Curso:</label>
+                            <p id="studentCourse" class="info-value">-</p>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="form-label">Fecha de Inscripción:</label>
+                            <p id="studentEnrollmentDate" class="info-value">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Absences History -->
+            <div class="card card--doodle mb-lg">
+                <div class="card__header">
+                    <h2 class="card__title">Historial de Faltas</h2>
+                </div>
+                <div class="card__body">
+                    <div class="table-container">
+                        <table class="table table--striped" id="studentAbsencesTable">
+                            <thead>
+                                <tr>
+                                    <th>Curso</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Situación</th>
+                                    <th>Sanción</th>
+                                    <th>Comentarios</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentAbsencesTableBody">
+                                <!-- Absence rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Comment Form -->
+            <div class="card card--doodle">
+                <div class="card__header">
+                    <h2 class="card__title">Agregar Comentario</h2>
+                </div>
+                <div class="card__body">
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label class="form-label">Seleccionar Falta</label>
+                            <select id="commentAbsence" class="form-control" required>
+                                <option value="">Selecciona una falta</option>
+                                <!-- Absence options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Comentario</label>
+                            <textarea id="commentText" class="form-control" rows="4" placeholder="Agrega tu comentario aquí..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn--primary">Agregar Comentario</button>
+                            <button type="reset" class="btn btn--secondary ml-sm">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p class="footer__text">Sistema de Reporte de Faltas IEVE &copy; 2025</p>
+        </footer>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/views/student-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - REPORTE DE FALTAS IEVE</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/views/login.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="header__title">REPORTE DE FALTAS IEVE</h1>
+        </header>
+        <main class="main">
+            <div class="login-container">
+                <div class="card card--doodle">
+                    <div class="card__header text-center">
+                        <h2 class="card__title">Bienvenido</h2>
+                        <p class="text-gray">Sistema de reporte de faltas</p>
+                    </div>
+                    <div class="card__body">
+                        <div class="illustration text-center mb-md">
+                            <div class="illustration__circle bg-primary-light mx-auto">
+                                <span class="illustration__icon text-primary" style="font-size: 3rem;">📚</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-center mb-lg">Selecciona tu rol para continuar</p>
+                        
+                        <form id="loginForm" class="login-form">
+                            <div class="form-group">
+                                <label class="form-label">Nombre de usuario</label>
+                                <input type="text" id="username" class="form-control" placeholder="Ingresa tu nombre de usuario" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Rol</label>
+                                <div class="role-selection">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="role" id="adminRole" value="admin" required>
+                                        <label class="form-check-label" for="adminRole">
+                                            Administrador
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="role" id="teacherRole" value="teacher" required>
+                                        <label class="form-check-label" for="teacherRole">
+                                            Maestro
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="role" id="studentRole" value="student" required>
+                                        <label class="form-check-label" for="studentRole">
+                                            Alumno
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="submit" class="btn btn--primary btn--block">Continuar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card__footer text-center">
+                        <p class="text-small text-gray">Sistema de Reporte de Faltas IEVE &copy; 2025</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/views/login.js"></script>
+</body>
+</html>
