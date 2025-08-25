@@ -119,6 +119,15 @@ function loadAbsenceDropdown() {
 function setupEventListeners() {
     // Comment form submission
     document.getElementById('commentForm').addEventListener('submit', handleCommentSubmit);
+    
+    // Handle logout button clicks
+    const logoutButtons = document.querySelectorAll('[data-logout]');
+    logoutButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+    });
 }
 
 /**
@@ -201,8 +210,7 @@ function getCurrentUser() {
  * @returns {Object|null} Student object or null if not found
  */
 function getStudentById(id) {
-    const students = JSON.parse(localStorage.getItem('ieve_students')) || [];
-    return students.find(student => student.id === id) || null;
+    return dataManager.getStudentById(id);
 }
 
 /**
@@ -211,8 +219,7 @@ function getStudentById(id) {
  * @returns {Object|null} Course object or null if not found
  */
 function getCourseById(id) {
-    const courses = JSON.parse(localStorage.getItem('ieve_courses')) || [];
-    return courses.find(course => course.id === id) || null;
+    return dataManager.getCourseById(id);
 }
 
 /**
@@ -220,7 +227,7 @@ function getCourseById(id) {
  * @returns {Array} Array of absence objects
  */
 function getAllAbsences() {
-    return JSON.parse(localStorage.getItem('ieve_absences')) || [];
+    return dataManager.getAllAbsences();
 }
 
 /**
@@ -229,8 +236,7 @@ function getAllAbsences() {
  * @returns {Object|null} Absence object or null if not found
  */
 function getAbsenceById(id) {
-    const absences = getAllAbsences();
-    return absences.find(absence => absence.id === id) || null;
+    return dataManager.getAbsenceById(id);
 }
 
 /**
@@ -239,8 +245,7 @@ function getAbsenceById(id) {
  * @returns {Array} Array of absence objects for the student
  */
 function getAbsencesByStudentId(studentId) {
-    const absences = getAllAbsences();
-    return absences.filter(absence => absence.studentId === studentId);
+    return dataManager.getAbsencesByStudentId(studentId);
 }
 
 /**
@@ -249,10 +254,5 @@ function getAbsencesByStudentId(studentId) {
  * @param {Object} updatedAbsence - Updated absence object
  */
 function updateAbsence(id, updatedAbsence) {
-    const absences = getAllAbsences();
-    const index = absences.findIndex(absence => absence.id === id);
-    if (index !== -1) {
-        absences[index] = updatedAbsence;
-        localStorage.setItem('ieve_absences', JSON.stringify(absences));
-    }
+    dataManager.updateAbsence(id, updatedAbsence);
 }

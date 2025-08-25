@@ -176,8 +176,7 @@ function getCurrentUser() {
  * @returns {Object|null} Student object or null if not found
  */
 function getStudentById(id) {
-    const students = JSON.parse(localStorage.getItem('ieve_students')) || [];
-    return students.find(student => student.id === id) || null;
+    return dataManager.getStudentById(id);
 }
 
 /**
@@ -186,8 +185,7 @@ function getStudentById(id) {
  * @returns {Object|null} Course object or null if not found
  */
 function getCourseById(id) {
-    const courses = JSON.parse(localStorage.getItem('ieve_courses')) || [];
-    return courses.find(course => course.id === id) || null;
+    return dataManager.getCourseById(id);
 }
 
 /**
@@ -195,7 +193,7 @@ function getCourseById(id) {
  * @returns {Array} Array of absence objects
  */
 function getAllAbsences() {
-    return JSON.parse(localStorage.getItem('ieve_absences')) || [];
+    return dataManager.getAllAbsences();
 }
 
 /**
@@ -204,6 +202,5 @@ function getAllAbsences() {
  * @returns {Array} Array of absence objects for the student
  */
 function getAbsencesByStudentId(studentId) {
-    const absences = getAllAbsences();
-    return absences.filter(absence => absence.studentId === studentId);
+    return dataManager.getAbsencesByStudentId(studentId);
 }

@@ -97,378 +97,20 @@ function logout() {
  * Initialize data storage with mock data if empty
  */
 function initializeData() {
-    // Check if we already have data
-    if (!localStorage.getItem('ieve_students')) {
-        localStorage.setItem('ieve_students', JSON.stringify(getMockStudents()));
-    }
-    
-    if (!localStorage.getItem('ieve_courses')) {
-        localStorage.setItem('ieve_courses', JSON.stringify(getMockCourses()));
-    }
-    
-    if (!localStorage.getItem('ieve_absences')) {
-        localStorage.setItem('ieve_absences', JSON.stringify(getMockAbsences()));
-    }
-    
-    if (!localStorage.getItem('ieve_users')) {
-        localStorage.setItem('ieve_users', JSON.stringify(getMockUsers()));
-    }
+    // Initialize data manager
+    dataManager.initializeFromLocalStorage();
 }
 
-/**
- * Get mock students data
- * @returns {Array} Array of student objects
- */
-function getMockStudents() {
-    return [
-        {
-            id: "student-001",
-            name: "María González",
-            email: "maria.gonzalez@example.com",
-            course: "course-001",
-            enrollmentDate: "2025-08-01"
-        },
-        {
-            id: "student-002",
-            name: "Carlos Rodríguez",
-            email: "carlos.rodriguez@example.com",
-            course: "course-001",
-            enrollmentDate: "2025-08-01"
-        },
-        {
-            id: "student-003",
-            name: "Ana Martínez",
-            email: "ana.martinez@example.com",
-            course: "course-002",
-            enrollmentDate: "2025-08-01"
-        },
-        {
-            id: "student-004",
-            name: "Luis Fernández",
-            email: "luis.fernandez@example.com",
-            course: "course-002",
-            enrollmentDate: "2025-08-01"
-        },
-        {
-            id: "student-005",
-            name: "Sofía López",
-            email: "sofia.lopez@example.com",
-            course: "course-003",
-            enrollmentDate: "2025-08-01"
-        },
-        {
-            id: "student-006",
-            name: "Pedro Sánchez",
-            email: "pedro.sanchez@example.com",
-            course: "course-001",
-            enrollmentDate: "2025-08-05"
-        },
-        {
-            id: "student-007",
-            name: "Elena Torres",
-            email: "elena.torres@example.com",
-            course: "course-003",
-            enrollmentDate: "2025-08-10"
-        },
-        {
-            id: "student-008",
-            name: "Jorge Ramírez",
-            email: "jorge.ramirez@example.com",
-            course: "course-002",
-            enrollmentDate: "2025-08-15"
-        },
-        {
-            id: "student-009",
-            name: "Carmen Ruiz",
-            email: "carmen.ruiz@example.com",
-            course: "course-001",
-            enrollmentDate: "2025-08-20"
-        },
-        {
-            id: "student-010",
-            name: "Miguel Herrera",
-            email: "miguel.herrera@example.com",
-            course: "course-003",
-            enrollmentDate: "2025-08-25"
-        }
-    ];
-}
 
-/**
- * Get mock courses data
- * @returns {Array} Array of course objects
- */
-function getMockCourses() {
-    return [
-        {
-            id: "course-001",
-            name: "Matemáticas Avanzadas",
-            teacher: "Prof. Elena Ruiz",
-            schedule: "Lunes y Miércoles 8:00-10:00"
-        },
-        {
-            id: "course-002",
-            name: "Literatura Universal",
-            teacher: "Prof. Jorge Pérez",
-            schedule: "Martes y Jueves 10:00-12:00"
-        },
-        {
-            id: "course-003",
-            name: "Ciencias Naturales",
-            teacher: "Prof. Carmen Silva",
-            schedule: "Viernes 8:00-12:00"
-        },
-        {
-            id: "course-004",
-            name: "Historia del Mundo",
-            teacher: "Prof. Miguel Ángel López",
-            schedule: "Lunes y Jueves 14:00-16:00"
-        },
-        {
-            id: "course-005",
-            name: "Arte y Cultura",
-            teacher: "Prof. Ana María González",
-            schedule: "Miércoles y Viernes 12:00-14:00"
-        }
-    ];
-}
 
-/**
- * Get mock absences data
- * @returns {Array} Array of absence objects
- */
-function getMockAbsences() {
-    return [
-        {
-            id: "absence-001",
-            studentId: "student-001",
-            courseId: "course-001",
-            type: 1, // Tardanza
-            category: "Académica",
-            situation: "Resuelta",
-            sanction: "Advertencia",
-            date: "2025-08-15",
-            comments: "Llegó 15 minutos tarde sin justificación"
-        },
-        {
-            id: "absence-002",
-            studentId: "student-002",
-            courseId: "course-001",
-            type: 3, // Ausencia injustificada
-            category: "Comportamiento",
-            situation: "Pendiente",
-            sanction: "Pendiente",
-            date: "2025-08-18",
-            comments: "No asistió a clase sin aviso previo"
-        },
-        {
-            id: "absence-003",
-            studentId: "student-003",
-            courseId: "course-002",
-            type: 2, // Ausencia justificada
-            category: "Académica",
-            situation: "Resuelta",
-            sanction: "Ninguna",
-            date: "2025-08-20",
-            comments: "Justificada por cita médica"
-        },
-        {
-            id: "absence-004",
-            studentId: "student-004",
-            courseId: "course-002",
-            type: 1, // Tardanza
-            category: "Académica",
-            situation: "Pendiente",
-            sanction: "Pendiente",
-            date: "2025-08-22",
-            comments: "Llegó 10 minutos tarde"
-        },
-        {
-            id: "absence-005",
-            studentId: "student-005",
-            courseId: "course-003",
-            type: 3, // Ausencia injustificada
-            category: "Comportamiento",
-            situation: "Resuelta",
-            sanction: "Suspensión de actividades extracurriculares por 1 semana",
-            date: "2025-08-10",
-            comments: "No asistió a clase sin justificación"
-        },
-        {
-            id: "absence-006",
-            studentId: "student-006",
-            courseId: "course-001",
-            type: 2, // Ausencia justificada
-            category: "Académica",
-            situation: "Resuelta",
-            sanction: "Ninguna",
-            date: "2025-08-12",
-            comments: "Justificada por enfermedad"
-        },
-        {
-            id: "absence-007",
-            studentId: "student-007",
-            courseId: "course-003",
-            type: 1, // Tardanza
-            category: "Comportamiento",
-            situation: "Resuelta",
-            sanction: "Advertencia",
-            date: "2025-08-14",
-            comments: "Llegó 20 minutos tarde"
-        },
-        {
-            id: "absence-008",
-            studentId: "student-008",
-            courseId: "course-002",
-            type: 3, // Ausencia injustificada
-            category: "Académica",
-            situation: "Pendiente",
-            sanction: "Pendiente",
-            date: "2025-08-16",
-            comments: "No asistió a clase sin aviso"
-        },
-        {
-            id: "absence-009",
-            studentId: "student-001",
-            courseId: "course-001",
-            type: 2, // Ausencia justificada
-            category: "Académica",
-            situation: "Resuelta",
-            sanction: "Ninguna",
-            date: "2025-08-05",
-            comments: "Justificada por cita médica"
-        },
-        {
-            id: "absence-010",
-            studentId: "student-002",
-            courseId: "course-001",
-            type: 1, // Tardanza
-            category: "Comportamiento",
-            situation: "Resuelta",
-            sanction: "Advertencia",
-            date: "2025-08-08",
-            comments: "Llegó 5 minutos tarde"
-        },
-        {
-            id: "absence-011",
-            studentId: "student-009",
-            courseId: "course-001",
-            type: 3, // Ausencia injustificada
-            category: "Académica",
-            situation: "Pendiente",
-            sanction: "Pendiente",
-            date: "2025-08-20",
-            comments: "No asistió a clase sin justificación"
-        },
-        {
-            id: "absence-012",
-            studentId: "student-010",
-            courseId: "course-003",
-            type: 1, // Tardanza
-            category: "Académica",
-            situation: "Resuelta",
-            sanction: "Advertencia",
-            date: "2025-08-18",
-            comments: "Llegó 15 minutos tarde"
-        }
-    ];
-}
 
-/**
- * Get mock users data
- * @returns {Array} Array of user objects
- */
-function getMockUsers() {
-    return [
-        {
-            id: "user-admin-001",
-            username: "admin",
-            role: "admin"
-        },
-        {
-            id: "user-teacher-001",
-            username: "teacher1",
-            role: "teacher"
-        },
-        {
-            id: "user-teacher-002",
-            username: "teacher2",
-            role: "teacher"
-        },
-        {
-            id: "user-teacher-003",
-            username: "teacher3",
-            role: "teacher"
-        },
-        {
-            id: "user-teacher-004",
-            username: "teacher4",
-            role: "teacher"
-        },
-        {
-            id: "user-teacher-005",
-            username: "teacher5",
-            role: "teacher"
-        },
-        {
-            id: "user-student-001",
-            username: "student1",
-            role: "student"
-        },
-        {
-            id: "user-student-002",
-            username: "student2",
-            role: "student"
-        },
-        {
-            id: "user-student-003",
-            username: "student3",
-            role: "student"
-        },
-        {
-            id: "user-student-004",
-            username: "student4",
-            role: "student"
-        },
-        {
-            id: "user-student-005",
-            username: "student5",
-            role: "student"
-        },
-        {
-            id: "user-student-006",
-            username: "student6",
-            role: "student"
-        },
-        {
-            id: "user-student-007",
-            username: "student7",
-            role: "student"
-        },
-        {
-            id: "user-student-008",
-            username: "student8",
-            role: "student"
-        },
-        {
-            id: "user-student-009",
-            username: "student9",
-            role: "student"
-        },
-        {
-            id: "user-student-010",
-            username: "student10",
-            role: "student"
-        }
-    ];
-}
 
 /**
  * Get all students from storage
  * @returns {Array} Array of student objects
  */
 function getAllStudents() {
-    return JSON.parse(localStorage.getItem('ieve_students')) || [];
+    return dataManager.getAllStudents();
 }
 
 /**
@@ -477,8 +119,7 @@ function getAllStudents() {
  * @returns {Object|null} Student object or null if not found
  */
 function getStudentById(id) {
-    const students = getAllStudents();
-    return students.find(student => student.id === id) || null;
+    return dataManager.getStudentById(id);
 }
 
 /**
@@ -486,9 +127,7 @@ function getStudentById(id) {
  * @param {Object} student - Student object to create
  */
 function createStudent(student) {
-    const students = getAllStudents();
-    students.push(student);
-    localStorage.setItem('ieve_students', JSON.stringify(students));
+    dataManager.createStudent(student);
 }
 
 /**
@@ -497,12 +136,7 @@ function createStudent(student) {
  * @param {Object} updatedStudent - Updated student object
  */
 function updateStudent(id, updatedStudent) {
-    const students = getAllStudents();
-    const index = students.findIndex(student => student.id === id);
-    if (index !== -1) {
-        students[index] = updatedStudent;
-        localStorage.setItem('ieve_students', JSON.stringify(students));
-    }
+    dataManager.updateStudent(id, updatedStudent);
 }
 
 /**
@@ -510,9 +144,7 @@ function updateStudent(id, updatedStudent) {
  * @param {string} id - Student ID
  */
 function deleteStudent(id) {
-    const students = getAllStudents();
-    const filteredStudents = students.filter(student => student.id !== id);
-    localStorage.setItem('ieve_students', JSON.stringify(filteredStudents));
+    dataManager.deleteStudent(id);
 }
 
 /**
@@ -520,7 +152,7 @@ function deleteStudent(id) {
  * @returns {Array} Array of course objects
  */
 function getAllCourses() {
-    return JSON.parse(localStorage.getItem('ieve_courses')) || [];
+    return dataManager.getAllCourses();
 }
 
 /**
@@ -529,8 +161,7 @@ function getAllCourses() {
  * @returns {Object|null} Course object or null if not found
  */
 function getCourseById(id) {
-    const courses = getAllCourses();
-    return courses.find(course => course.id === id) || null;
+    return dataManager.getCourseById(id);
 }
 
 /**
@@ -538,9 +169,7 @@ function getCourseById(id) {
  * @param {Object} course - Course object to create
  */
 function createCourse(course) {
-    const courses = getAllCourses();
-    courses.push(course);
-    localStorage.setItem('ieve_courses', JSON.stringify(courses));
+    dataManager.createCourse(course);
 }
 
 /**
@@ -549,12 +178,7 @@ function createCourse(course) {
  * @param {Object} updatedCourse - Updated course object
  */
 function updateCourse(id, updatedCourse) {
-    const courses = getAllCourses();
-    const index = courses.findIndex(course => course.id === id);
-    if (index !== -1) {
-        courses[index] = updatedCourse;
-        localStorage.setItem('ieve_courses', JSON.stringify(courses));
-    }
+    dataManager.updateCourse(id, updatedCourse);
 }
 
 /**
@@ -562,9 +186,7 @@ function updateCourse(id, updatedCourse) {
  * @param {string} id - Course ID
  */
 function deleteCourse(id) {
-    const courses = getAllCourses();
-    const filteredCourses = courses.filter(course => course.id !== id);
-    localStorage.setItem('ieve_courses', JSON.stringify(filteredCourses));
+    dataManager.deleteCourse(id);
 }
 
 /**
@@ -572,7 +194,7 @@ function deleteCourse(id) {
  * @returns {Array} Array of absence objects
  */
 function getAllAbsences() {
-    return JSON.parse(localStorage.getItem('ieve_absences')) || [];
+    return dataManager.getAllAbsences();
 }
 
 /**
@@ -581,8 +203,7 @@ function getAllAbsences() {
  * @returns {Object|null} Absence object or null if not found
  */
 function getAbsenceById(id) {
-    const absences = getAllAbsences();
-    return absences.find(absence => absence.id === id) || null;
+    return dataManager.getAbsenceById(id);
 }
 
 /**
@@ -591,8 +212,7 @@ function getAbsenceById(id) {
  * @returns {Array} Array of absence objects for the student
  */
 function getAbsencesByStudentId(studentId) {
-    const absences = getAllAbsences();
-    return absences.filter(absence => absence.studentId === studentId);
+    return dataManager.getAbsencesByStudentId(studentId);
 }
 
 /**
@@ -600,9 +220,7 @@ function getAbsencesByStudentId(studentId) {
  * @param {Object} absence - Absence object to create
  */
 function createAbsence(absence) {
-    const absences = getAllAbsences();
-    absences.push(absence);
-    localStorage.setItem('ieve_absences', JSON.stringify(absences));
+    dataManager.createAbsence(absence);
 }
 
 /**
@@ -611,12 +229,7 @@ function createAbsence(absence) {
  * @param {Object} updatedAbsence - Updated absence object
  */
 function updateAbsence(id, updatedAbsence) {
-    const absences = getAllAbsences();
-    const index = absences.findIndex(absence => absence.id === id);
-    if (index !== -1) {
-        absences[index] = updatedAbsence;
-        localStorage.setItem('ieve_absences', JSON.stringify(absences));
-    }
+    dataManager.updateAbsence(id, updatedAbsence);
 }
 
 /**
@@ -624,9 +237,7 @@ function updateAbsence(id, updatedAbsence) {
  * @param {string} id - Absence ID
  */
 function deleteAbsence(id) {
-    const absences = getAllAbsences();
-    const filteredAbsences = absences.filter(absence => absence.id !== id);
-    localStorage.setItem('ieve_absences', JSON.stringify(filteredAbsences));
+    dataManager.deleteAbsence(id);
 }
 
 /**
@@ -635,8 +246,7 @@ function deleteAbsence(id) {
  * @returns {Object|null} User object or null if not found
  */
 function getUserByUsername(username) {
-    const users = JSON.parse(localStorage.getItem('ieve_users')) || [];
-    return users.find(user => user.username === username) || null;
+    return dataManager.getUserByUsername(username);
 }
 
 /**
@@ -663,6 +273,5 @@ function getAbsenceTypeLabel(type) {
  * @returns {Array} Array of student objects in the course
  */
 function getStudentsByCourseId(courseId) {
-    const students = getAllStudents();
-    return students.filter(student => student.course === courseId);
+    return dataManager.getStudentsByCourseId(courseId);
 }

@@ -208,6 +208,15 @@ function setupEventListeners() {
     document.getElementById('courseSearch').addEventListener('input', function() {
         filterCoursesTable(this.value);
     });
+    
+    // Handle logout button clicks
+    const logoutButtons = document.querySelectorAll('[data-logout]');
+    logoutButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+    });
 }
 
 /**
@@ -465,7 +474,7 @@ function getCurrentUser() {
  * @returns {Array} Array of student objects
  */
 function getAllStudents() {
-    return JSON.parse(localStorage.getItem('ieve_students')) || [];
+    return dataManager.getAllStudents();
 }
 
 /**
@@ -474,8 +483,7 @@ function getAllStudents() {
  * @returns {Object|null} Student object or null if not found
  */
 function getStudentById(id) {
-    const students = getAllStudents();
-    return students.find(student => student.id === id) || null;
+    return dataManager.getStudentById(id);
 }
 
 /**
@@ -484,12 +492,7 @@ function getStudentById(id) {
  * @param {Object} updatedStudent - Updated student object
  */
 function updateStudent(id, updatedStudent) {
-    const students = getAllStudents();
-    const index = students.findIndex(student => student.id === id);
-    if (index !== -1) {
-        students[index] = updatedStudent;
-        localStorage.setItem('ieve_students', JSON.stringify(students));
-    }
+    dataManager.updateStudent(id, updatedStudent);
 }
 
 /**
@@ -497,9 +500,7 @@ function updateStudent(id, updatedStudent) {
  * @param {Object} student - Student object to create
  */
 function createStudent(student) {
-    const students = getAllStudents();
-    students.push(student);
-    localStorage.setItem('ieve_students', JSON.stringify(students));
+    dataManager.createStudent(student);
 }
 
 /**
@@ -507,9 +508,7 @@ function createStudent(student) {
  * @param {string} id - Student ID
  */
 function deleteStudent(id) {
-    const students = getAllStudents();
-    const filteredStudents = students.filter(student => student.id !== id);
-    localStorage.setItem('ieve_students', JSON.stringify(filteredStudents));
+    dataManager.deleteStudent(id);
 }
 
 /**
@@ -517,7 +516,7 @@ function deleteStudent(id) {
  * @returns {Array} Array of course objects
  */
 function getAllCourses() {
-    return JSON.parse(localStorage.getItem('ieve_courses')) || [];
+    return dataManager.getAllCourses();
 }
 
 /**
@@ -526,8 +525,7 @@ function getAllCourses() {
  * @returns {Object|null} Course object or null if not found
  */
 function getCourseById(id) {
-    const courses = getAllCourses();
-    return courses.find(course => course.id === id) || null;
+    return dataManager.getCourseById(id);
 }
 
 /**
@@ -536,12 +534,7 @@ function getCourseById(id) {
  * @param {Object} updatedCourse - Updated course object
  */
 function updateCourse(id, updatedCourse) {
-    const courses = getAllCourses();
-    const index = courses.findIndex(course => course.id === id);
-    if (index !== -1) {
-        courses[index] = updatedCourse;
-        localStorage.setItem('ieve_courses', JSON.stringify(courses));
-    }
+    dataManager.updateCourse(id, updatedCourse);
 }
 
 /**
@@ -549,9 +542,7 @@ function updateCourse(id, updatedCourse) {
  * @param {Object} course - Course object to create
  */
 function createCourse(course) {
-    const courses = getAllCourses();
-    courses.push(course);
-    localStorage.setItem('ieve_courses', JSON.stringify(courses));
+    dataManager.createCourse(course);
 }
 
 /**
@@ -559,9 +550,7 @@ function createCourse(course) {
  * @param {string} id - Course ID
  */
 function deleteCourse(id) {
-    const courses = getAllCourses();
-    const filteredCourses = courses.filter(course => course.id !== id);
-    localStorage.setItem('ieve_courses', JSON.stringify(filteredCourses));
+    dataManager.deleteCourse(id);
 }
 
 /**
@@ -569,5 +558,5 @@ function deleteCourse(id) {
  * @returns {Array} Array of absence objects
  */
 function getAllAbsences() {
-    return JSON.parse(localStorage.getItem('ieve_absences')) || [];
+    return dataManager.getAllAbsences();
 }

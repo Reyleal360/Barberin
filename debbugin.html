@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug del Sistema de Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .section { margin-bottom: 30px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .credentials { background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .error { background-color: #ffe6e6; padding: 15px; border-radius: 5px; color: #d32f2f; }
+        .success { background-color: #e8f5e8; padding: 15px; border-radius: 5px; color: #2e7d32; }
+        button { background: #1976d2; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #1565c0; }
+        .test-form { margin: 15px 0; }
+        input, select { padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 3px; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        .user-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+        .user-card { background: #f0f0f0; padding: 10px; border-radius: 5px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug del Sistema de Login - REPORTE DE FALTAS IEVE</h1>
+        
+        <div class="section">
+            <h2>📋 Usuarios Disponibles en el Sistema</h2>
+            <div id="usersList" class="user-list"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 Probar Login</h2>
+            <div class="test-form">
+                <input type="text" id="testUsername" placeholder="Username">
+                <select id="testRole">
+                    <option value="">Selecciona rol</option>
+                    <option value="admin">Admin</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="student">Student</option>
+                </select>
+                <button onclick="testLogin()">Probar Login</button>
+            </div>
+            <div id="testResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>✅ Credenciales Válidas Para Probar</h2>
+            <div class="credentials">
+                <h3>👨‍💼 Admin:</h3>
+                <p><strong>Username:</strong> admin | <strong>Role:</strong> admin</p>
+                <button onclick="quickTest('admin', 'admin')">Probar</button>
+            </div>
+            
+            <div class="credentials">
+                <h3>👩‍🏫 Teachers:</h3>
+                <p><strong>Username:</strong> teacher1, teacher2, teacher3, teacher4, teacher5 | <strong>Role:</strong> teacher</p>
+                <button onclick="quickTest('teacher1', 'teacher')">Probar teacher1</button>
+                <button onclick="quickTest('teacher2', 'teacher')">Probar teacher2</button>
+            </div>
+            
+            <div class="credentials">
+                <h3>👨‍🎓 Students:</h3>
+                <p><strong>Username:</strong> student1, student2, student3... student10 | <strong>Role:</strong> student</p>
+                <button onclick="quickTest('student1', 'student')">Probar student1</button>
+                <button onclick="quickTest('student2', 'student')">Probar student2</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 Datos del LocalStorage</h2>
+            <button onclick="showStorageData()">Ver Datos</button>
+            <button onclick="resetData()">Resetear Datos</button>
+            <div id="storageData"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🚀 Ir al Login Real</h2>
+            <p>Una vez que hayas identificado las credenciales correctas, usa el botón para ir al sistema real:</p>
+            <button onclick="goToLogin()" style="background: #4caf50;">Ir al Login del Sistema</button>
+        </div>
+    </div>
+
+    <script>
+        // Mock data functions (copied from your main.js)
+        function getMockUsers() {
+            return [
+                { id: "user-admin-001", username: "admin", role: "admin" },
+                { id: "user-teacher-001", username: "teacher1", role: "teacher" },
+                { id: "user-teacher-002", username: "teacher2", role: "teacher" },
+                { id: "user-teacher-003", username: "teacher3", role: "teacher" },
+                { id: "user-teacher-004", username: "teacher4", role: "teacher" },
+                { id: "user-teacher-005", username: "teacher5", role: "teacher" },
+                { id: "user-student-001", username: "student1", role: "student" },
+                { id: "user-student-002", username: "student2", role: "student" },
+                { id: "user-student-003", username: "student3", role: "student" },
+                { id: "user-student-004", username: "student4", role: "student" },
+                { id: "user-student-005", username: "student5", role: "student" },
+                { id: "user-student-006", username: "student6", role: "student" },
+                { id: "user-student-007", username: "student7", role: "student" },
+                { id: "user-student-008", username: "student8", role: "student" },
+                { id: "user-student-009", username: "student9", role: "student" },
+                { id: "user-student-010", username: "student10", role: "student" }
+            ];
+        }
+
+        // Initialize data
+        function initializeDebugData() {
+            if (!localStorage.getItem('ieve_users')) {
+                localStorage.setItem('ieve_users', JSON.stringify(getMockUsers()));
+            }
+        }
+
+        // Load users list
+        function loadUsersList() {
+            const users = JSON.parse(localStorage.getItem('ieve_users')) || [];
+            const usersList = document.getElementById('usersList');
+            
+            usersList.innerHTML = '';
+            
+            users.forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = 'user-card';
+                userCard.innerHTML = `
+                    <strong>${user.username}</strong><br>
+                    <small>Role: ${user.role}</small><br>
+                    <small>ID: ${user.id}</small>
+                `;
+                usersList.appendChild(userCard);
+            });
+        }
+
+        // Test login function
+        function testLogin() {
+            const username = document.getElementById('testUsername').value.trim();
+            const role = document.getElementById('testRole').value;
+            const resultDiv = document.getElementById('testResult');
+            
+            if (!username || !role) {
+                resultDiv.innerHTML = '<div class="error">Por favor ingresa username y selecciona un role</div>';
+                return;
+            }
+            
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('ieve_users')) || [];
+            const user = users.find(u => u.username === username);
+            
+            if (!user) {
+                resultDiv.innerHTML = `<div class="error">❌ Usuario "${username}" no encontrado</div>`;
+                return;
+            }
+            
+            if (user.role !== role) {
+                resultDiv.innerHTML = `<div class="error">❌ Usuario "${username}" tiene role "${user.role}", no "${role}"</div>`;
+                return;
+            }
+            
+            resultDiv.innerHTML = `<div class="success">✅ Login exitoso! Usuario: ${user.username}, Role: ${user.role}</div>`;
+            
+            // Simulate setting current user
+            localStorage.setItem('ieve_currentUser', JSON.stringify(user));
+        }
+
+        // Quick test function
+        function quickTest(username, role) {
+            document.getElementById('testUsername').value = username;
+            document.getElementById('testRole').value = role;
+            testLogin();
+        }
+
+        // Show storage data
+        function showStorageData() {
+            const storageDiv = document.getElementById('storageData');
+            const users = JSON.parse(localStorage.getItem('ieve_users')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('ieve_currentUser')) || null;
+            
+            storageDiv.innerHTML = `
+                <h3>Usuarios en localStorage:</h3>
+                <pre>${JSON.stringify(users, null, 2)}</pre>
+                <h3>Usuario Actual:</h3>
+                <pre>${JSON.stringify(currentUser, null, 2)}</pre>
+            `;
+        }
+
+        // Reset data
+        function resetData() {
+            localStorage.removeItem('ieve_users');
+            localStorage.removeItem('ieve_currentUser');
+            localStorage.removeItem('ieve_students');
+            localStorage.removeItem('ieve_courses');
+            localStorage.removeItem('ieve_absences');
+            
+            initializeDebugData();
+            loadUsersList();
+            
+            alert('Datos reseteados. Los datos mock han sido restaurados.');
+        }
+
+        // Go to login
+        function goToLogin() {
+            // In a real environment, this would navigate to login.html
+            alert('En tu aplicación real, navega a login.html y usa las credenciales que probaste aquí.');
+        }
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeDebugData();
+            loadUsersList();
+            
+            // Show a helpful message
+            const helpMsg = document.createElement('div');
+            helpMsg.className = 'success';
+            helpMsg.innerHTML = `
+                <h3>💡 Instrucciones:</h3>
+                <ol>
+                    <li>Revisa la lista de usuarios disponibles arriba</li>
+                    <li>Prueba hacer login con cualquiera de las credenciales mostradas</li>
+                    <li>Los usernames válidos son: <strong>admin</strong>, <strong>teacher1-teacher5</strong>, <strong>student1-student10</strong></li>
+                    <li>Asegúrate de seleccionar el role correcto para cada usuario</li>
+                </ol>
+            `;
+            document.querySelector('.container').insertBefore(helpMsg, document.querySelector('.section'));
+        });
+    </script>
+</body>
+</html>

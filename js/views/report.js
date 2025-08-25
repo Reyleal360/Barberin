@@ -281,7 +281,7 @@ function getCurrentUser() {
  * @returns {Array} Array of student objects
  */
 function getAllStudents() {
-    return JSON.parse(localStorage.getItem('ieve_students')) || [];
+    return dataManager.getAllStudents();
 }
 
 /**
@@ -289,7 +289,7 @@ function getAllStudents() {
  * @returns {Array} Array of course objects
  */
 function getAllCourses() {
-    return JSON.parse(localStorage.getItem('ieve_courses')) || [];
+    return dataManager.getAllCourses();
 }
 
 /**
@@ -297,5 +297,5 @@ function getAllCourses() {
  * @returns {Array} Array of absence objects
  */
 function getAllAbsences() {
-    return JSON.parse(localStorage.getItem('ieve_absences')) || [];
+    return dataManager.getAllAbsences();
 }

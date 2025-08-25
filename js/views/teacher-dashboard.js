@@ -381,7 +381,7 @@ function getCurrentUser() {
  * @returns {Array} Array of student objects
  */
 function getAllStudents() {
-    return JSON.parse(localStorage.getItem('ieve_students')) || [];
+    return dataManager.getAllStudents();
 }
 
 /**
@@ -390,8 +390,7 @@ function getAllStudents() {
  * @returns {Object|null} Student object or null if not found
  */
 function getStudentById(id) {
-    const students = getAllStudents();
-    return students.find(student => student.id === id) || null;
+    return dataManager.getStudentById(id);
 }
 
 /**
@@ -399,7 +398,7 @@ function getStudentById(id) {
  * @returns {Array} Array of course objects
  */
 function getAllCourses() {
-    return JSON.parse(localStorage.getItem('ieve_courses')) || [];
+    return dataManager.getAllCourses();
 }
 
 /**
@@ -407,7 +406,7 @@ function getAllCourses() {
  * @returns {Array} Array of absence objects
  */
 function getAllAbsences() {
-    return JSON.parse(localStorage.getItem('ieve_absences')) || [];
+    return dataManager.getAllAbsences();
 }
 
 /**
@@ -416,8 +415,7 @@ function getAllAbsences() {
  * @returns {Object|null} Absence object or null if not found
  */
 function getAbsenceById(id) {
-    const absences = getAllAbsences();
-    return absences.find(absence => absence.id === id) || null;
+    return dataManager.getAbsenceById(id);
 }
 
 /**
@@ -425,9 +423,7 @@ function getAbsenceById(id) {
  * @param {Object} absence - Absence object to create
  */
 function createAbsence(absence) {
-    const absences = getAllAbsences();
-    absences.push(absence);
-    localStorage.setItem('ieve_absences', JSON.stringify(absences));
+    dataManager.createAbsence(absence);
 }
 
 /**
@@ -436,12 +432,7 @@ function createAbsence(absence) {
  * @param {Object} updatedAbsence - Updated absence object
  */
 function updateAbsence(id, updatedAbsence) {
-    const absences = getAllAbsences();
-    const index = absences.findIndex(absence => absence.id === id);
-    if (index !== -1) {
-        absences[index] = updatedAbsence;
-        localStorage.setItem('ieve_absences', JSON.stringify(absences));
-    }
+    dataManager.updateAbsence(id, updatedAbsence);
 }
 
 /**
@@ -449,7 +440,5 @@ function updateAbsence(id, updatedAbsence) {
  * @param {string} id - Absence ID
  */
 function deleteAbsence(id) {
-    const absences = getAllAbsences();
-    const filteredAbsences = absences.filter(absence => absence.id !== id);
-    localStorage.setItem('ieve_absences', JSON.stringify(filteredAbsences));
+    dataManager.deleteAbsence(id);
 }

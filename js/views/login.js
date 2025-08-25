@@ -68,8 +68,7 @@ function authenticateUser(username, role) {
  * @returns {Object|null} User object or null if not found
  */
 function getUserByUsername(username) {
-    const users = JSON.parse(localStorage.getItem('ieve_users')) || [];
-    return users.find(user => user.username === username) || null;
+    return dataManager.getUserByUsername(username);
 }
 
 /**
