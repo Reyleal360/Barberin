@@ -12,19 +12,25 @@ graph TD
     C --> G[Users Data]
 ```
 
-## New Architecture (Using JSON File)
+## New Architecture (Using MySQL Database with Backend API)
 
 ```mermaid
 graph TD
     A[HTML Pages] --> B[JavaScript Files]
     B --> H[DataManager Class]
-    H --> I[data.json]
-    I --> J[All Application Data]
+    H --> I[Backend API]
+    I --> J[MySQL Database]
+    J --> K[Students Table]
+    J --> L[Courses Table]
+    J --> M[Absences Table]
+    J --> N[Users Table]
 ```
 
 ## Benefits of New Architecture
 
-1. **Centralized Data Storage**: All data is stored in a single JSON file
-2. **Easier Management**: Data can be easily backed up or migrated
-3. **Consistent Interface**: DataManager provides a consistent API for data operations
-4. **Better Organization**: Clear separation between data management and business logic
+1. **Persistent Data Storage**: Data is stored in a MySQL database for persistence
+2. **Scalability**: Database can handle larger amounts of data and concurrent users
+3. **Data Integrity**: Database enforces data types and relationships
+4. **Centralized Data Management**: All data is managed through the backend API
+5. **Consistent Interface**: DataManager provides a consistent API for data operations
+6. **Better Organization**: Clear separation between frontend, backend, and data storage

@@ -1,173 +1,175 @@
-# REPORTE DE FALTAS IEVE - Frontend System
+# IEVE Absence Reporting System
 
 ## Overview
+The IEVE Absence Reporting System is a web application designed to manage student absences in an educational institution. This system allows administrators to manage students, courses, and users, while teachers can record and manage student absences, and students can view their absence history.
 
-This repository contains the frontend implementation of the "REPORTE DE FALTAS IEVE" system, a web application for managing student absences in an educational institution. The system is designed for three user roles: administrators, teachers, and students.
+## Features
+- **Admin Dashboard**: Manage students, courses, and users
+- **Teacher Dashboard**: Record and manage student absences
+- **Student Dashboard**: View absence history and add comments
+- **Reporting**: Generate reports on student absences
+- **Authentication**: Role-based access control for admins, teachers, and students
 
-## System Features
+## System Architecture
+The application uses a modern architecture with:
+- **Frontend**: HTML, CSS, and JavaScript for the user interface
+- **Backend**: Node.js with Express for REST API
+- **Database**: MySQL for data storage
+- **Data Management**: DataManager class for handling all data operations through API calls
 
-### User Roles
+## Prerequisites
+- Node.js (version 12 or higher)
+- MySQL database server
+- A modern web browser (Chrome, Firefox, Edge, Safari)
 
-1. **Administrators**
-   - Manage students (add, edit, delete)
-   - Manage courses (add, edit, delete)
-   - View system reports
+## Installation
 
-2. **Teachers**
-   - Register, modify, and delete student absences
-   - View student details and absence history
-   - Generate reports for their courses
+### 1. Database Setup
+1. Create a MySQL database
+2. Execute the `database-init.sql` script to initialize the database with initial data
+3. Update the database connection parameters in `backend/.env` if needed
 
-3. **Students**
-   - View personal information
-   - View absence history
-   - Add comments to their absences
+### 2. Backend Setup
+1. Navigate to the `backend` directory
+2. Run `npm install` to install dependencies
+3. Run `npm start` to start the backend server
 
-### Core Functionality
+### 3. Frontend Setup
+1. Open the `index.html` file in your web browser
+2. The application will automatically redirect you to the login page
 
-- Role-based authentication system
-- Student and course management
-- Absence registration and tracking
-- Detailed student views with absence history
-- Comment system for students
-- Report generation and filtering
-- Responsive design for all device sizes
+## Usage
 
-## Technology Stack
+### Login
+Use one of the following credentials to log in:
+- **Admin**: Username "admin", Role "Administrador"
+- **Teacher**: Username "teacher1", Role "Maestro"
+- **Student**: Username "student1", Role "Alumno"
 
-- **HTML5**: Semantic markup and structure
-- **CSS3**: Styling with a custom "doodle rosa y negro" theme
-- **JavaScript (ES6+)**: Interactivity and data management
-- **LocalStorage**: Client-side data persistence (simulated backend)
-- **No external libraries**: Pure vanilla implementation
+### Admin Dashboard
+As an admin, you can:
+- Manage students (create, read, update, delete)
+- Manage courses (create, read, update, delete)
+- View statistics about the system
 
-## Project Structure
+### Teacher Dashboard
+As a teacher, you can:
+- Record student absences
+- Manage existing absences (edit, delete)
+- View student details
 
+### Student Dashboard
+As a student, you can:
+- View your absence history
+- Add comments to your absences
+
+### Reporting
+All users can generate reports on student absences with various filters.
+
+## API Endpoints
+The backend provides the following REST endpoints:
+
+### Students
+- `GET /api/students` - Get all students
+- `GET /api/students/:id` - Get a student by ID
+- `POST /api/students` - Create a new student
+- `PUT /api/students/:id` - Update an existing student
+- `DELETE /api/students/:id` - Delete a student
+
+### Courses
+- `GET /api/courses` - Get all courses
+- `GET /api/courses/:id` - Get a course by ID
+- `POST /api/courses` - Create a new course
+- `PUT /api/courses/:id` - Update an existing course
+- `DELETE /api/courses/:id` - Delete a course
+
+### Absences
+- `GET /api/absences` - Get all absences
+- `GET /api/absences/:id` - Get an absence by ID
+- `GET /api/absences/student/:studentId` - Get absences for a specific student
+- `POST /api/absences` - Create a new absence
+- `PUT /api/absences/:id` - Update an existing absence
+- `DELETE /api/absences/:id` - Delete an absence
+
+### Users
+- `GET /api/users` - Get all users
+- `GET /api/users/:username` - Get a user by username
+- `POST /api/users` - Create a new user
+- `PUT /api/users/:id` - Update an existing user
+- `DELETE /api/users/:id` - Delete a user
+
+## File Structure
 ```
-REPORTE-DE-FALTAS-IEVE/
-│
-├── index.html                 # Entry point
-├── login.html                 # Authentication page
-├── admin-dashboard.html       # Admin interface
-├── teacher-dashboard.html     # Teacher interface
-├── student-dashboard.html     # Student interface
-├── student-detail.html        # Student detail view
-├── report.html                # Report generation interface
-│
-├── css/                       # Stylesheets
-│   ├── base.css               # Base styles and reset
-│   ├── components.css         # Reusable component styles
-│   ├── layout.css             # Layout and grid system
-│   ├── themes.css             # Theme variables and doodle styles
-│   ├── utilities.css          # Utility classes
-│   └── views/                 # View-specific styles
-│
-├── js/                        # JavaScript files
-│   ├── utils/                 # Utility functions
-│   ├── services/              # Data service layer
-│   ├── components/            # Reusable components
-│   └── views/                 # View-specific logic
-│
-└── assets/                    # Static assets
-    ├── images/                # Static images
-    └── icons/                 # Icon assets
+├── backend/                 # Backend Node.js application
+│   ├── server.js             # Main server file
+│   ├── package.json          # Backend dependencies
+│   ├── .env                  # Database configuration
+│   ├── config/
+│   │   └── db.js             # Database connection
+│   └── controllers/
+│       ├── studentController.js
+│       ├── courseController.js
+│       ├── absenceController.js
+│       └── userController.js
+├── database-init.sql        # Database initialization script
+├── index.html               # Main entry point
+├── login.html               # Login page
+├── admin-dashboard.html     # Admin dashboard
+├── student-dashboard.html   # Student dashboard
+├── report.html              # Report generation page
+├── css/                     # Stylesheets
+│   ├── base.css
+│   ├── components.css
+│   ├── layout.css
+│   ├── themes.css
+│   ├── utilities.css
+│   └── views/
+│       ├── dashboard.css
+│       ├── login.css
+│       ├── report.css
+│       └── student-detail.css
+└── js/
+    ├── data-manager.js       # DataManager class
+    ├── main.js               # Main application logic
+    └── views/
+        ├── admin-dashboard.js
+        ├── login.js
+        ├── report.js
+        ├── student-dashboard.js
+        ├── student-detail.js
+        └── teacher-dashboard.js
 ```
 
-## Color Palette - Doodle Rosa y Negro
+## Development
 
-- **Primary Pink**: `#FF69B4` (Hot Pink)
-- **Dark Pink**: `#FF1493` (Deep Pink)
-- **Light Pink**: `#FFB6C1` (Light Pink)
-- **Black**: `#000000`
-- **Dark Gray**: `#2F2F2F`
-- **Light Gray**: `#E0E0E0`
-- **White**: `#FFFFFF`
+### Frontend Development
+The frontend is built with vanilla JavaScript and uses a DataManager class to handle all data operations. The DataManager makes API calls to the backend for all CRUD operations.
 
-## Data Models
+### Backend Development
+The backend is built with Node.js and Express. It provides REST endpoints for all entities in the system. The backend connects to a MySQL database for data storage.
 
-### Student
-```javascript
-{
-  id: string,
-  name: string,
-  email: string,
-  course: string,
-  enrollmentDate: Date
-}
-```
+### Database Development
+The database schema is defined in `database-schema.md` and the initialization script is in `database-init.sql`. The database uses the following tables:
+- `students`: Student information
+- `courses`: Course information
+- `absences`: Student absence records
+- `users`: User authentication information
 
-### Course
-```javascript
-{
-  id: string,
-  name: string,
-  teacher: string,
-  schedule: string
-}
-```
-
-### Absence
-```javascript
-{
-  id: string,
-  studentId: string,
-  courseId: string,
-  type: number,         // 1: Tardanza, 2: Ausencia justificada, 3: Ausencia injustificada
-  category: string,     // Académica, Comportamiento, etc.
-  situation: string,    // Pendiente, Resuelta, etc.
-  sanction: string,     // Advertencia, Suspensión, Expulsión, etc.
-  date: Date,
-  comments: string
-}
-```
-
-## Implementation Progress
-
-- [x] Project structure and file organization
-- [x] Color palette and theme design
-- [x] Data models and mock data structure
-- [x] UI/UX design specifications
-- [x] Technical specification
-- [x] Development plan
-- [x] Login page implementation
-- [x] Admin dashboard implementation
-- [x] Teacher dashboard implementation
-- [x] Student dashboard implementation
-- [x] Student detail view implementation
-- [x] Report generation implementation
-- [x] Responsive design
-- [x] Testing and refinement
-- [x] Documentation
-
-## Getting Started
-
-1. Clone the repository
-2. Open `index.html` in a web browser
-3. Use the following credentials for testing:
-   - Admin: username "admin"
-   - Teacher: username "teacher1" or "teacher2"
-   - Student: username "student1" or "student2"
-
-## Documentation
-
-- [Project Structure](project-structure.md)
-- [System Architecture](system-architecture.md)
-- [Data Models](data-models.md)
-- [UI/UX Design](ui-ux-design.md)
-- [Technical Specification](technical-specification.md)
-- [Development Plan](development-plan.md)
-- [Test Plan](test-plan.md)
-- [Backend Integration Guide](backend-integration.md)
-- [User Guide](user-guide.md)
+## Troubleshooting
+1. If data doesn't load, check that the backend server is running
+2. If changes aren't saved, check the backend server logs for errors
+3. Clear browser cache if you're not seeing updates
+4. Ensure MySQL database is running and accessible
 
 ## Contributing
-
-This project is currently in development. For major changes, please open an issue first to discuss what you would like to change.
+We welcome contributions to the IEVE Absence Reporting System. Please follow these steps:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
 ## License
-
-This project is for educational purposes and does not have a formal license.
+This project is licensed under the MIT License.
 
 ## Contact
-
-For questions about this project, please open an issue in the repository.
+For questions or support, please contact the development team.

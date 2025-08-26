@@ -3,7 +3,7 @@
  * REPORTE DE FALTAS IEVE
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Check if user is authenticated and is admin
     const currentUser = getCurrentUser();
     if (!currentUser || currentUser.role !== 'admin') {
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize dashboard
-    initializeDashboard();
+    await initializeDashboard();
     
     // Set up event listeners
     setupEventListeners();
@@ -21,118 +21,138 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Initialize the admin dashboard
  */
-function initializeDashboard() {
-    // Load statistics
-    loadStatistics();
-    
-    // Load students table
-    loadStudentsTable();
-    
-    // Load courses table
-    loadCoursesTable();
-    
-    // Populate course dropdowns
-    populateCourseDropdowns();
+async function initializeDashboard() {
+    try {
+        // Load statistics
+        await loadStatistics();
+        
+        // Load students table
+        await loadStudentsTable();
+        
+        // Load courses table
+        await loadCoursesTable();
+        
+        // Populate course dropdowns
+        await populateCourseDropdowns();
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+    }
 }
 
 /**
  * Load dashboard statistics
  */
-function loadStatistics() {
-    const studentCount = getAllStudents().length;
-    const courseCount = getAllCourses().length;
-    const absenceCount = getAllAbsences().length;
-    
-    document.getElementById('studentCount').textContent = studentCount;
-    document.getElementById('courseCount').textContent = courseCount;
-    document.getElementById('absenceCount').textContent = absenceCount;
+async function loadStatistics() {
+    try {
+        const students = await getAllStudents();
+        const courses = await getAllCourses();
+        const absences = await getAllAbsences();
+        
+        document.getElementById('studentCount').textContent = students.length;
+        document.getElementById('courseCount').textContent = courses.length;
+        document.getElementById('absenceCount').textContent = absences.length;
+    } catch (error) {
+        console.error('Error loading statistics:', error);
+    }
 }
 
 /**
  * Load students table
  */
-function loadStudentsTable() {
-    const students = getAllStudents();
-    const courses = getAllCourses();
-    const tableBody = document.getElementById('studentsTableBody');
-    
-    // Clear existing rows
-    tableBody.innerHTML = '';
-    
-    // Add rows for each student
-    students.forEach(student => {
-        const course = courses.find(c => c.id === student.course);
-        const row = document.createElement('tr');
+async function loadStudentsTable() {
+    try {
+        const students = await getAllStudents();
+        const courses = await getAllCourses();
+        const tableBody = document.getElementById('studentsTableBody');
         
-        row.innerHTML = `
-            <td>${student.name}</td>
-            <td>${student.email}</td>
-            <td>${course ? course.name : 'Curso no encontrado'}</td>
-            <td class="table__actions">
-                <button class="table__action-btn table__action-btn--edit" data-edit="${student.id}">
-                    Editar
-                </button>
-                <button class="table__action-btn table__action-btn--delete" data-delete="${student.id}">
-                    Eliminar
-                </button>
-            </td>
-        `;
+        // Clear existing rows
+        tableBody.innerHTML = '';
         
-        tableBody.appendChild(row);
-    });
+        // Add rows for each student
+        for (const student of students) {
+            const course = courses.find(c => c.id === student.course_id);
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${student.name}</td>
+                <td>${student.email}</td>
+                <td>${course ? course.name : 'Curso no encontrado'}</td>
+                <td class="table__actions">
+                    <button class="table__action-btn table__action-btn--edit" data-edit="${student.id}">
+                        Editar
+                    </button>
+                    <button class="table__action-btn table__action-btn--delete" data-delete="${student.id}">
+                        Eliminar
+                    </button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+        }
+    } catch (error) {
+        console.error('Error loading students table:', error);
+    }
 }
 
 /**
  * Load courses table
  */
-function loadCoursesTable() {
-    const courses = getAllCourses();
-    const tableBody = document.getElementById('coursesTableBody');
-    
-    // Clear existing rows
-    tableBody.innerHTML = '';
-    
-    // Add rows for each course
-    courses.forEach(course => {
-        const row = document.createElement('tr');
+async function loadCoursesTable() {
+    try {
+        const courses = await getAllCourses();
+        const tableBody = document.getElementById('coursesTableBody');
         
-        row.innerHTML = `
-            <td>${course.name}</td>
-            <td>${course.teacher}</td>
-            <td>${course.schedule}</td>
-            <td class="table__actions">
-                <button class="table__action-btn table__action-btn--edit" data-edit="${course.id}">
-                    Editar
-                </button>
-                <button class="table__action-btn table__action-btn--delete" data-delete="${course.id}">
-                    Eliminar
-                </button>
-            </td>
-        `;
+        // Clear existing rows
+        tableBody.innerHTML = '';
         
-        tableBody.appendChild(row);
-    });
+        // Add rows for each course
+        for (const course of courses) {
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${course.name}</td>
+                <td>${course.teacher}</td>
+                <td>${course.schedule}</td>
+                <td class="table__actions">
+                    <button class="table__action-btn table__action-btn--edit" data-edit="${course.id}">
+                        Editar
+                    </button>
+                    <button class="table__action-btn table__action-btn--delete" data-delete="${course.id}">
+                        Eliminar
+                    </button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+        }
+    } catch (error) {
+        console.error('Error loading courses table:', error);
+    }
 }
 
 /**
  * Populate course dropdowns
  */
-function populateCourseDropdowns() {
-    const courses = getAllCourses();
-    const dropdowns = document.querySelectorAll('#studentCourse');
-    
-    dropdowns.forEach(dropdown => {
-        // Clear existing options except the first one
-        dropdown.innerHTML = '<option value="">Selecciona un curso</option>';
+async function populateCourseDropdowns() {
+    try {
+        const courses = await getAllCourses();
+        const dropdowns = document.querySelectorAll('#studentCourse');
         
-        // Add course options
-        courses.forEach(course => {
-            const option = document.createElement('option');
-            option.value = course.id;
-            option.textContent = course.name;
-            dropdown.appendChild(option);
+        dropdowns.forEach(dropdown => {
+            // Clear existing options except the first one
+            dropdown.innerHTML = '<option value="">Selecciona un curso</option>';
+            
+            // Add course options
+            for (const course of courses) {
+                const option = document.createElement('option');
+                option.value = course.id;
+                option.textContent = course.name;
+                dropdown.appendChild(option);
+            }
         });
-    });
+    } catch (error) {
+        console.error('Error populating course dropdowns:', error);
+    }
 }
 
 /**
@@ -236,72 +256,88 @@ function openStudentModal() {
  * Open student modal for editing
  * @param {string} studentId - Student ID to edit
  */
-function editStudent(studentId) {
-    const student = getStudentById(studentId);
-    if (!student) return;
-    
-    // Fill form with student data
-    document.getElementById('studentId').value = student.id;
-    document.getElementById('studentName').value = student.name;
-    document.getElementById('studentEmail').value = student.email;
-    document.getElementById('studentCourse').value = student.course;
-    document.getElementById('studentEnrollmentDate').value = student.enrollmentDate;
-    document.getElementById('studentModalTitle').textContent = 'Editar Estudiante';
-    
-    // Open modal
-    document.getElementById('studentModal').classList.add('modal--open');
+async function editStudent(studentId) {
+    try {
+        const student = await getStudentById(studentId);
+        if (!student) return;
+        
+        // Fill form with student data
+        document.getElementById('studentId').value = student.id;
+        document.getElementById('studentName').value = student.name;
+        document.getElementById('studentEmail').value = student.email;
+        document.getElementById('studentCourse').value = student.course_id;
+        document.getElementById('studentEnrollmentDate').value = student.enrollment_date;
+        document.getElementById('studentModalTitle').textContent = 'Editar Estudiante';
+        
+        // Open modal
+        document.getElementById('studentModal').classList.add('modal--open');
+    } catch (error) {
+        console.error('Error editing student:', error);
+        alert('Error al cargar los datos del estudiante');
+    }
 }
 
 /**
  * Save student (create or update)
  */
-function saveStudent() {
-    const id = document.getElementById('studentId').value;
-    const name = document.getElementById('studentName').value.trim();
-    const email = document.getElementById('studentEmail').value.trim();
-    const course = document.getElementById('studentCourse').value;
-    const enrollmentDate = document.getElementById('studentEnrollmentDate').value;
-    
-    // Validate input
-    if (!name || !email || !course || !enrollmentDate) {
-        alert('Por favor completa todos los campos');
-        return;
+async function saveStudent() {
+    try {
+        const id = document.getElementById('studentId').value;
+        const name = document.getElementById('studentName').value.trim();
+        const email = document.getElementById('studentEmail').value.trim();
+        const course = document.getElementById('studentCourse').value;
+        const enrollmentDate = document.getElementById('studentEnrollmentDate').value;
+        
+        // Validate input
+        if (!name || !email || !course || !enrollmentDate) {
+            alert('Por favor completa todos los campos');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Por favor ingresa un email válido');
+            return;
+        }
+        
+        let result;
+        // Create or update student
+        if (id) {
+            // Update existing student
+            const updatedStudent = {
+                id: id,
+                name: name,
+                email: email,
+                course_id: course,
+                enrollment_date: enrollmentDate
+            };
+            result = await updateStudent(id, updatedStudent);
+        } else {
+            // Create new student
+            const newStudent = {
+                id: 'student-' + Date.now(),
+                name: name,
+                email: email,
+                course_id: course,
+                enrollment_date: enrollmentDate
+            };
+            result = await createStudent(newStudent);
+        }
+        
+        if (!result) {
+            alert('Error al guardar el estudiante');
+            return;
+        }
+        
+        // Close modal and refresh table
+        closeStudentModal();
+        await loadStudentsTable();
+        await loadStatistics();
+    } catch (error) {
+        console.error('Error saving student:', error);
+        alert('Error al guardar el estudiante');
     }
-    
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Por favor ingresa un email válido');
-        return;
-    }
-    
-    // Create or update student
-    if (id) {
-        // Update existing student
-        const updatedStudent = {
-            id: id,
-            name: name,
-            email: email,
-            course: course,
-            enrollmentDate: enrollmentDate
-        };
-        updateStudent(id, updatedStudent);
-    } else {
-        // Create new student
-        const newStudent = {
-            id: 'student-' + Date.now(),
-            name: name,
-            email: email,
-            course: course,
-            enrollmentDate: enrollmentDate
-        };
-        createStudent(newStudent);
-    }
-    
-    // Close modal and refresh table
-    closeStudentModal();
-    loadStudentsTable();
-    loadStatistics();
 }
 
 /**
@@ -315,11 +351,21 @@ function closeStudentModal() {
  * Delete student with confirmation
  * @param {string} studentId - Student ID to delete
  */
-function deleteStudentConfirm(studentId) {
+async function deleteStudentConfirm(studentId) {
     if (confirm('¿Estás seguro de que deseas eliminar este estudiante?')) {
-        deleteStudent(studentId);
-        loadStudentsTable();
-        loadStatistics();
+        try {
+            const result = await deleteStudent(studentId);
+            if (!result) {
+                alert('Error al eliminar el estudiante');
+                return;
+            }
+            
+            await loadStudentsTable();
+            await loadStatistics();
+        } catch (error) {
+            console.error('Error deleting student:', error);
+            alert('Error al eliminar el estudiante');
+        }
     }
 }
 
@@ -340,62 +386,78 @@ function openCourseModal() {
  * Open course modal for editing
  * @param {string} courseId - Course ID to edit
  */
-function editCourse(courseId) {
-    const course = getCourseById(courseId);
-    if (!course) return;
-    
-    // Fill form with course data
-    document.getElementById('courseId').value = course.id;
-    document.getElementById('courseName').value = course.name;
-    document.getElementById('courseTeacher').value = course.teacher;
-    document.getElementById('courseSchedule').value = course.schedule;
-    document.getElementById('courseModalTitle').textContent = 'Editar Curso';
-    
-    // Open modal
-    document.getElementById('courseModal').classList.add('modal--open');
+async function editCourse(courseId) {
+    try {
+        const course = await getCourseById(courseId);
+        if (!course) return;
+        
+        // Fill form with course data
+        document.getElementById('courseId').value = course.id;
+        document.getElementById('courseName').value = course.name;
+        document.getElementById('courseTeacher').value = course.teacher;
+        document.getElementById('courseSchedule').value = course.schedule;
+        document.getElementById('courseModalTitle').textContent = 'Editar Curso';
+        
+        // Open modal
+        document.getElementById('courseModal').classList.add('modal--open');
+    } catch (error) {
+        console.error('Error editing course:', error);
+        alert('Error al cargar los datos del curso');
+    }
 }
 
 /**
  * Save course (create or update)
  */
-function saveCourse() {
-    const id = document.getElementById('courseId').value;
-    const name = document.getElementById('courseName').value.trim();
-    const teacher = document.getElementById('courseTeacher').value.trim();
-    const schedule = document.getElementById('courseSchedule').value.trim();
-    
-    // Validate input
-    if (!name || !teacher || !schedule) {
-        alert('Por favor completa todos los campos');
-        return;
+async function saveCourse() {
+    try {
+        const id = document.getElementById('courseId').value;
+        const name = document.getElementById('courseName').value.trim();
+        const teacher = document.getElementById('courseTeacher').value.trim();
+        const schedule = document.getElementById('courseSchedule').value.trim();
+        
+        // Validate input
+        if (!name || !teacher || !schedule) {
+            alert('Por favor completa todos los campos');
+            return;
+        }
+        
+        let result;
+        // Create or update course
+        if (id) {
+            // Update existing course
+            const updatedCourse = {
+                id: id,
+                name: name,
+                teacher: teacher,
+                schedule: schedule
+            };
+            result = await updateCourse(id, updatedCourse);
+        } else {
+            // Create new course
+            const newCourse = {
+                id: 'course-' + Date.now(),
+                name: name,
+                teacher: teacher,
+                schedule: schedule
+            };
+            result = await createCourse(newCourse);
+        }
+        
+        if (!result) {
+            alert('Error al guardar el curso');
+            return;
+        }
+        
+        // Close modal and refresh table
+        closeCourseModal();
+        await loadCoursesTable();
+        await loadStatistics();
+        await populateCourseDropdowns();
+    } catch (error) {
+        console.error('Error saving course:', error);
+        alert('Error al guardar el curso');
     }
-    
-    // Create or update course
-    if (id) {
-        // Update existing course
-        const updatedCourse = {
-            id: id,
-            name: name,
-            teacher: teacher,
-            schedule: schedule
-        };
-        updateCourse(id, updatedCourse);
-    } else {
-        // Create new course
-        const newCourse = {
-            id: 'course-' + Date.now(),
-            name: name,
-            teacher: teacher,
-            schedule: schedule
-        };
-        createCourse(newCourse);
-    }
-    
-    // Close modal and refresh table
-    closeCourseModal();
-    loadCoursesTable();
-    loadStatistics();
-    populateCourseDropdowns();
 }
 
 /**
@@ -409,12 +471,22 @@ function closeCourseModal() {
  * Delete course with confirmation
  * @param {string} courseId - Course ID to delete
  */
-function deleteCourseConfirm(courseId) {
+async function deleteCourseConfirm(courseId) {
     if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
-        deleteCourse(courseId);
-        loadCoursesTable();
-        loadStatistics();
-        populateCourseDropdowns();
+        try {
+            const result = await deleteCourse(courseId);
+            if (!result) {
+                alert('Error al eliminar el curso');
+                return;
+            }
+            
+            await loadCoursesTable();
+            await loadStatistics();
+            await populateCourseDropdowns();
+        } catch (error) {
+            console.error('Error deleting course:', error);
+            alert('Error al eliminar el curso');
+        }
     }
 }
 
@@ -470,93 +542,9 @@ function getCurrentUser() {
 }
 
 /**
- * Get all students from storage
- * @returns {Array} Array of student objects
+ * Logout function
  */
-function getAllStudents() {
-    return dataManager.getAllStudents();
-}
-
-/**
- * Get student by ID
- * @param {string} id - Student ID
- * @returns {Object|null} Student object or null if not found
- */
-function getStudentById(id) {
-    return dataManager.getStudentById(id);
-}
-
-/**
- * Update student by ID
- * @param {string} id - Student ID
- * @param {Object} updatedStudent - Updated student object
- */
-function updateStudent(id, updatedStudent) {
-    dataManager.updateStudent(id, updatedStudent);
-}
-
-/**
- * Create a new student
- * @param {Object} student - Student object to create
- */
-function createStudent(student) {
-    dataManager.createStudent(student);
-}
-
-/**
- * Delete student by ID
- * @param {string} id - Student ID
- */
-function deleteStudent(id) {
-    dataManager.deleteStudent(id);
-}
-
-/**
- * Get all courses from storage
- * @returns {Array} Array of course objects
- */
-function getAllCourses() {
-    return dataManager.getAllCourses();
-}
-
-/**
- * Get course by ID
- * @param {string} id - Course ID
- * @returns {Object|null} Course object or null if not found
- */
-function getCourseById(id) {
-    return dataManager.getCourseById(id);
-}
-
-/**
- * Update course by ID
- * @param {string} id - Course ID
- * @param {Object} updatedCourse - Updated course object
- */
-function updateCourse(id, updatedCourse) {
-    dataManager.updateCourse(id, updatedCourse);
-}
-
-/**
- * Create a new course
- * @param {Object} course - Course object to create
- */
-function createCourse(course) {
-    dataManager.createCourse(course);
-}
-
-/**
- * Delete course by ID
- * @param {string} id - Course ID
- */
-function deleteCourse(id) {
-    dataManager.deleteCourse(id);
-}
-
-/**
- * Get all absences from storage
- * @returns {Array} Array of absence objects
- */
-function getAllAbsences() {
-    return dataManager.getAllAbsences();
+function logout() {
+    localStorage.removeItem('ieve_currentUser');
+    window.location.href = 'login.html';
 }

@@ -96,157 +96,101 @@ function logout() {
 /**
  * Initialize data storage with mock data if empty
  */
-function initializeData() {
-    // Initialize data manager
-    dataManager.initializeFromLocalStorage();
+async function initializeData() {
+    // Load data from backend
+    await dataManager.loadData();
 }
 
-
-
-
-
-/**
- * Get all students from storage
- * @returns {Array} Array of student objects
- */
-function getAllStudents() {
-    return dataManager.getAllStudents();
+// Student methods
+async function getAllStudents() {
+    return await dataManager.getAllStudents();
 }
 
-/**
- * Get student by ID
- * @param {string} id - Student ID
- * @returns {Object|null} Student object or null if not found
- */
-function getStudentById(id) {
-    return dataManager.getStudentById(id);
+async function getStudentById(id) {
+    return await dataManager.getStudentById(id);
 }
 
-/**
- * Create a new student
- * @param {Object} student - Student object to create
- */
-function createStudent(student) {
-    dataManager.createStudent(student);
+async function createStudent(student) {
+    return await dataManager.createStudent(student);
 }
 
-/**
- * Update student by ID
- * @param {string} id - Student ID
- * @param {Object} updatedStudent - Updated student object
- */
-function updateStudent(id, updatedStudent) {
-    dataManager.updateStudent(id, updatedStudent);
+async function updateStudent(id, updatedStudent) {
+    return await dataManager.updateStudent(id, updatedStudent);
 }
 
-/**
- * Delete student by ID
- * @param {string} id - Student ID
- */
-function deleteStudent(id) {
-    dataManager.deleteStudent(id);
+async function deleteStudent(id) {
+    return await dataManager.deleteStudent(id);
 }
 
-/**
- * Get all courses from storage
- * @returns {Array} Array of course objects
- */
-function getAllCourses() {
-    return dataManager.getAllCourses();
+async function getStudentsByCourseId(courseId) {
+    return await dataManager.getStudentsByCourseId(courseId);
 }
 
-/**
- * Get course by ID
- * @param {string} id - Course ID
- * @returns {Object|null} Course object or null if not found
- */
-function getCourseById(id) {
-    return dataManager.getCourseById(id);
+// Course methods
+async function getAllCourses() {
+    return await dataManager.getAllCourses();
 }
 
-/**
- * Create a new course
- * @param {Object} course - Course object to create
- */
-function createCourse(course) {
-    dataManager.createCourse(course);
+async function getCourseById(id) {
+    return await dataManager.getCourseById(id);
 }
 
-/**
- * Update course by ID
- * @param {string} id - Course ID
- * @param {Object} updatedCourse - Updated course object
- */
-function updateCourse(id, updatedCourse) {
-    dataManager.updateCourse(id, updatedCourse);
+async function createCourse(course) {
+    return await dataManager.createCourse(course);
 }
 
-/**
- * Delete course by ID
- * @param {string} id - Course ID
- */
-function deleteCourse(id) {
-    dataManager.deleteCourse(id);
+async function updateCourse(id, updatedCourse) {
+    return await dataManager.updateCourse(id, updatedCourse);
 }
 
-/**
- * Get all absences from storage
- * @returns {Array} Array of absence objects
- */
-function getAllAbsences() {
-    return dataManager.getAllAbsences();
+async function deleteCourse(id) {
+    return await dataManager.deleteCourse(id);
 }
 
-/**
- * Get absence by ID
- * @param {string} id - Absence ID
- * @returns {Object|null} Absence object or null if not found
- */
-function getAbsenceById(id) {
-    return dataManager.getAbsenceById(id);
+// Absence methods
+async function getAllAbsences() {
+    return await dataManager.getAllAbsences();
 }
 
-/**
- * Get absences by student ID
- * @param {string} studentId - Student ID
- * @returns {Array} Array of absence objects for the student
- */
-function getAbsencesByStudentId(studentId) {
-    return dataManager.getAbsencesByStudentId(studentId);
+async function getAbsenceById(id) {
+    return await dataManager.getAbsenceById(id);
 }
 
-/**
- * Create a new absence
- * @param {Object} absence - Absence object to create
- */
-function createAbsence(absence) {
-    dataManager.createAbsence(absence);
+async function getAbsencesByStudentId(studentId) {
+    return await dataManager.getAbsencesByStudentId(studentId);
 }
 
-/**
- * Update absence by ID
- * @param {string} id - Absence ID
- * @param {Object} updatedAbsence - Updated absence object
- */
-function updateAbsence(id, updatedAbsence) {
-    dataManager.updateAbsence(id, updatedAbsence);
+async function createAbsence(absence) {
+    return await dataManager.createAbsence(absence);
 }
 
-/**
- * Delete absence by ID
- * @param {string} id - Absence ID
- */
-function deleteAbsence(id) {
-    dataManager.deleteAbsence(id);
+async function updateAbsence(id, updatedAbsence) {
+    return await dataManager.updateAbsence(id, updatedAbsence);
 }
 
-/**
- * Get user by username
- * @param {string} username - Username
- * @returns {Object|null} User object or null if not found
- */
-function getUserByUsername(username) {
-    return dataManager.getUserByUsername(username);
+async function deleteAbsence(id) {
+    return await dataManager.deleteAbsence(id);
+}
+
+// User methods
+async function getAllUsers() {
+    return await dataManager.getAllUsers();
+}
+
+async function getUserByUsername(username) {
+    return await dataManager.getUserByUsername(username);
+}
+
+async function createUser(user) {
+    return await dataManager.createUser(user);
+}
+
+async function updateUser(id, updatedUser) {
+    return await dataManager.updateUser(id, updatedUser);
+}
+
+async function deleteUser(id) {
+    return await dataManager.deleteUser(id);
 }
 
 /**
@@ -265,13 +209,4 @@ function getAbsenceTypeLabel(type) {
         default:
             return "Desconocido";
     }
-}
-
-/**
- * Get all students for a specific course
- * @param {string} courseId - Course ID
- * @returns {Array} Array of student objects in the course
- */
-function getStudentsByCourseId(courseId) {
-    return dataManager.getStudentsByCourseId(courseId);
 }

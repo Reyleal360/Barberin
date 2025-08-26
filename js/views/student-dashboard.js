@@ -3,7 +3,7 @@
  * REPORTE DE FALTAS IEVE
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Check if user is authenticated and is student
     const currentUser = getCurrentUser();
     if (!currentUser || currentUser.role !== 'student') {
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize dashboard
-    initializeDashboard();
+    await initializeDashboard();
     
     // Set up event listeners
     setupEventListeners();
@@ -21,96 +21,108 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Initialize the student dashboard
  */
-function initializeDashboard() {
+async function initializeDashboard() {
     // Load student information
-    loadStudentInfo();
+    await loadStudentInfo();
     
     // Load absences history
-    loadAbsencesHistory();
+    await loadAbsencesHistory();
     
     // Load absence dropdown for comments
-    loadAbsenceDropdown();
+    await loadAbsenceDropdown();
 }
 
 /**
  * Load student information
  */
-function loadStudentInfo() {
-    const currentUser = getCurrentUser();
-    const student = getStudentById(currentUser.id.replace('user-', 'student-'));
-    
-    if (student) {
-        document.getElementById('studentName').textContent = student.name;
-        document.getElementById('studentEmail').textContent = student.email;
+async function loadStudentInfo() {
+    try {
+        const currentUser = getCurrentUser();
+        const student = await getStudentById(currentUser.id.replace('user-', 'student-'));
         
-        // Get course name
-        const course = getCourseById(student.course);
-        document.getElementById('studentCourse').textContent = course ? course.name : 'Curso no encontrado';
-        
-        document.getElementById('studentEnrollmentDate').textContent = student.enrollmentDate;
+        if (student) {
+            document.getElementById('studentName').textContent = student.name;
+            document.getElementById('studentEmail').textContent = student.email;
+            
+            // Get course name
+            const course = await getCourseById(student.course_id);
+            document.getElementById('studentCourse').textContent = course ? course.name : 'Curso no encontrado';
+            
+            document.getElementById('studentEnrollmentDate').textContent = student.enrollment_date;
+        }
+    } catch (error) {
+        console.error('Error loading student info:', error);
     }
 }
 
 /**
  * Load absences history
  */
-function loadAbsencesHistory() {
-    const currentUser = getCurrentUser();
-    const studentId = currentUser.id.replace('user-', 'student-');
-    const absences = getAbsencesByStudentId(studentId);
-    const courses = getAllCourses();
-    const tableBody = document.getElementById('studentAbsencesTableBody');
-    
-    // Clear existing rows
-    tableBody.innerHTML = '';
-    
-    // Add rows for each absence
-    absences.forEach(absence => {
-        const course = courses.find(c => c.id === absence.courseId);
+async function loadAbsencesHistory() {
+    try {
+        const currentUser = getCurrentUser();
+        const studentId = currentUser.id.replace('user-', 'student-');
+        const absences = await getAbsencesByStudentId(studentId);
+        const courses = await getAllCourses();
+        const tableBody = document.getElementById('studentAbsencesTableBody');
         
-        const row = document.createElement('tr');
+        // Clear existing rows
+        tableBody.innerHTML = '';
         
-        row.innerHTML = `
-            <td>${course ? course.name : 'Curso no encontrado'}</td>
-            <td>${getAbsenceTypeLabel(absence.type)}</td>
-            <td>${absence.date}</td>
-            <td>${absence.situation}</td>
-            <td>${absence.sanction}</td>
-            <td>${absence.comments}</td>
-        `;
+        // Add rows for each absence
+        for (const absence of absences) {
+            const course = courses.find(c => c.id === absence.course_id);
+            
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${course ? course.name : 'Curso no encontrado'}</td>
+                <td>${getAbsenceTypeLabel(absence.type)}</td>
+                <td>${absence.date}</td>
+                <td>${absence.situation}</td>
+                <td>${absence.sanction}</td>
+                <td>${absence.comments || ''}</td>
+            `;
+            
+            tableBody.appendChild(row);
+        }
         
-        tableBody.appendChild(row);
-    });
-    
-    // If no absences, show a message
-    if (absences.length === 0) {
-        const row = document.createElement('tr');
-        row.innerHTML = '<td colspan="6" class="text-center">No tienes faltas registradas</td>';
-        tableBody.appendChild(row);
+        // If no absences, show a message
+        if (absences.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = '<td colspan="6" class="text-center">No tienes faltas registradas</td>';
+            tableBody.appendChild(row);
+        }
+    } catch (error) {
+        console.error('Error loading absences history:', error);
     }
 }
 
 /**
  * Load absence dropdown for comments
  */
-function loadAbsenceDropdown() {
-    const currentUser = getCurrentUser();
-    const studentId = currentUser.id.replace('user-', 'student-');
-    const absences = getAbsencesByStudentId(studentId);
-    const courses = getAllCourses();
-    const dropdown = document.getElementById('commentAbsence');
-    
-    // Clear existing options except the first one
-    dropdown.innerHTML = '<option value="">Selecciona una falta</option>';
-    
-    // Add absence options
-    absences.forEach(absence => {
-        const course = courses.find(c => c.id === absence.courseId);
-        const option = document.createElement('option');
-        option.value = absence.id;
-        option.textContent = `${getAbsenceTypeLabel(absence.type)} - ${course ? course.name : 'Curso no encontrado'} - ${absence.date}`;
-        dropdown.appendChild(option);
-    });
+async function loadAbsenceDropdown() {
+    try {
+        const currentUser = getCurrentUser();
+        const studentId = currentUser.id.replace('user-', 'student-');
+        const absences = await getAbsencesByStudentId(studentId);
+        const courses = await getAllCourses();
+        const dropdown = document.getElementById('commentAbsence');
+        
+        // Clear existing options except the first one
+        dropdown.innerHTML = '<option value="">Selecciona una falta</option>';
+        
+        // Add absence options
+        for (const absence of absences) {
+            const course = courses.find(c => c.id === absence.course_id);
+            const option = document.createElement('option');
+            option.value = absence.id;
+            option.textContent = `${getAbsenceTypeLabel(absence.type)} - ${course ? course.name : 'Curso no encontrado'} - ${absence.date}`;
+            dropdown.appendChild(option);
+        }
+    } catch (error) {
+        console.error('Error loading absence dropdown:', error);
+    }
 }
 
 /**
@@ -134,47 +146,56 @@ function setupEventListeners() {
  * Handle comment form submission
  * @param {Event} e - Form submission event
  */
-function handleCommentSubmit(e) {
+async function handleCommentSubmit(e) {
     e.preventDefault();
     
-    // Get form values
-    const absenceId = document.getElementById('commentAbsence').value;
-    const commentText = document.getElementById('commentText').value.trim();
-    
-    // Validate input
-    if (!absenceId || !commentText) {
-        alert('Por favor selecciona una falta y escribe un comentario');
-        return;
+    try {
+        // Get form values
+        const absenceId = document.getElementById('commentAbsence').value;
+        const commentText = document.getElementById('commentText').value.trim();
+        
+        // Validate input
+        if (!absenceId || !commentText) {
+            alert('Por favor selecciona una falta y escribe un comentario');
+            return;
+        }
+        
+        // Get existing absence
+        const absence = await getAbsenceById(absenceId);
+        if (!absence) {
+            alert('Falta no encontrada');
+            return;
+        }
+        
+        // Add comment to absence (in a real app, this would be a separate comments array)
+        const updatedComments = absence.comments ? 
+            `${absence.comments}\n\nComentario del alumno: ${commentText}` : 
+            `Comentario del alumno: ${commentText}`;
+        
+        const updatedAbsence = {
+            ...absence,
+            comments: updatedComments
+        };
+        
+        // Update absence
+        const result = await updateAbsence(absenceId, updatedAbsence);
+        if (!result) {
+            alert('Error al actualizar la falta');
+            return;
+        }
+        
+        // Reset form
+        document.getElementById('commentForm').reset();
+        
+        // Reload absences history
+        await loadAbsencesHistory();
+        
+        // Show success message
+        alert('Comentario agregado correctamente');
+    } catch (error) {
+        console.error('Error handling comment submission:', error);
+        alert('Error al agregar el comentario');
     }
-    
-    // Get existing absence
-    const absence = getAbsenceById(absenceId);
-    if (!absence) {
-        alert('Falta no encontrada');
-        return;
-    }
-    
-    // Add comment to absence (in a real app, this would be a separate comments array)
-    const updatedComments = absence.comments ? 
-        `${absence.comments}\n\nComentario del alumno: ${commentText}` : 
-        `Comentario del alumno: ${commentText}`;
-    
-    const updatedAbsence = {
-        ...absence,
-        comments: updatedComments
-    };
-    
-    // Update absence
-    updateAbsence(absenceId, updatedAbsence);
-    
-    // Reset form
-    document.getElementById('commentForm').reset();
-    
-    // Reload absences history
-    loadAbsencesHistory();
-    
-    // Show success message
-    alert('Comentario agregado correctamente');
 }
 
 /**
@@ -205,54 +226,9 @@ function getCurrentUser() {
 }
 
 /**
- * Get student by ID
- * @param {string} id - Student ID
- * @returns {Object|null} Student object or null if not found
+ * Logout function
  */
-function getStudentById(id) {
-    return dataManager.getStudentById(id);
-}
-
-/**
- * Get course by ID
- * @param {string} id - Course ID
- * @returns {Object|null} Course object or null if not found
- */
-function getCourseById(id) {
-    return dataManager.getCourseById(id);
-}
-
-/**
- * Get all absences from storage
- * @returns {Array} Array of absence objects
- */
-function getAllAbsences() {
-    return dataManager.getAllAbsences();
-}
-
-/**
- * Get absence by ID
- * @param {string} id - Absence ID
- * @returns {Object|null} Absence object or null if not found
- */
-function getAbsenceById(id) {
-    return dataManager.getAbsenceById(id);
-}
-
-/**
- * Get absences by student ID
- * @param {string} studentId - Student ID
- * @returns {Array} Array of absence objects for the student
- */
-function getAbsencesByStudentId(studentId) {
-    return dataManager.getAbsencesByStudentId(studentId);
-}
-
-/**
- * Update absence by ID
- * @param {string} id - Absence ID
- * @param {Object} updatedAbsence - Updated absence object
- */
-function updateAbsence(id, updatedAbsence) {
-    dataManager.updateAbsence(id, updatedAbsence);
+function logout() {
+    localStorage.removeItem('ieve_currentUser');
+    window.location.href = 'login.html';
 }

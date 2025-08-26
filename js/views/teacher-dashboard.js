@@ -3,7 +3,7 @@
  * REPORTE DE FALTAS IEVE
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Check if user is authenticated and is teacher
     const currentUser = getCurrentUser();
     if (!currentUser || currentUser.role !== 'teacher') {
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize dashboard
-    initializeDashboard();
+    await initializeDashboard();
     
     // Set up event listeners
     setupEventListeners();
@@ -21,97 +21,113 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Initialize the teacher dashboard
  */
-function initializeDashboard() {
-    // Set today's date as default
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('absenceDate').value = today;
-    
-    // Load dropdowns
-    loadStudentDropdown();
-    loadCourseDropdown();
-    
-    // Load absences table
-    loadAbsencesTable();
+async function initializeDashboard() {
+    try {
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('absenceDate').value = today;
+        
+        // Load dropdowns
+        await loadStudentDropdown();
+        await loadCourseDropdown();
+        
+        // Load absences table
+        await loadAbsencesTable();
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+    }
 }
 
 /**
  * Load student dropdown
  */
-function loadStudentDropdown() {
-    const students = getAllStudents();
-    const dropdown = document.getElementById('absenceStudent');
-    
-    // Clear existing options except the first one
-    dropdown.innerHTML = '<option value="">Selecciona un estudiante</option>';
-    
-    // Add student options
-    students.forEach(student => {
-        const option = document.createElement('option');
-        option.value = student.id;
-        option.textContent = student.name;
-        dropdown.appendChild(option);
-    });
+async function loadStudentDropdown() {
+    try {
+        const students = await getAllStudents();
+        const dropdown = document.getElementById('absenceStudent');
+        
+        // Clear existing options except the first one
+        dropdown.innerHTML = '<option value="">Selecciona un estudiante</option>';
+        
+        // Add student options
+        for (const student of students) {
+            const option = document.createElement('option');
+            option.value = student.id;
+            option.textContent = student.name;
+            dropdown.appendChild(option);
+        }
+    } catch (error) {
+        console.error('Error loading student dropdown:', error);
+    }
 }
 
 /**
  * Load course dropdown
  */
-function loadCourseDropdown() {
-    const courses = getAllCourses();
-    const dropdown = document.getElementById('absenceCourse');
-    
-    // Clear existing options except the first one
-    dropdown.innerHTML = '<option value="">Selecciona un curso</option>';
-    
-    // Add course options
-    courses.forEach(course => {
-        const option = document.createElement('option');
-        option.value = course.id;
-        option.textContent = course.name;
-        dropdown.appendChild(option);
-    });
+async function loadCourseDropdown() {
+    try {
+        const courses = await getAllCourses();
+        const dropdown = document.getElementById('absenceCourse');
+        
+        // Clear existing options except the first one
+        dropdown.innerHTML = '<option value="">Selecciona un curso</option>';
+        
+        // Add course options
+        for (const course of courses) {
+            const option = document.createElement('option');
+            option.value = course.id;
+            option.textContent = course.name;
+            dropdown.appendChild(option);
+        }
+    } catch (error) {
+        console.error('Error loading course dropdown:', error);
+    }
 }
 
 /**
  * Load absences table
  */
-function loadAbsencesTable() {
-    const absences = getAllAbsences();
-    const students = getAllStudents();
-    const courses = getAllCourses();
-    const tableBody = document.getElementById('absencesTableBody');
-    
-    // Clear existing rows
-    tableBody.innerHTML = '';
-    
-    // Add rows for each absence
-    absences.forEach(absence => {
-        const student = students.find(s => s.id === absence.studentId);
-        const course = courses.find(c => c.id === absence.courseId);
+async function loadAbsencesTable() {
+    try {
+        const absences = await getAllAbsences();
+        const students = await getAllStudents();
+        const courses = await getAllCourses();
+        const tableBody = document.getElementById('absencesTableBody');
         
-        const row = document.createElement('tr');
+        // Clear existing rows
+        tableBody.innerHTML = '';
         
-        row.innerHTML = `
-            <td>${student ? student.name : 'Estudiante no encontrado'}</td>
-            <td>${course ? course.name : 'Curso no encontrado'}</td>
-            <td>${getAbsenceTypeLabel(absence.type)}</td>
-            <td>${absence.date}</td>
-            <td>${absence.situation}</td>
-            <td class="table__actions">
-                <button class="table__action-btn table__action-btn--edit" data-edit="${absence.id}">
-                    Editar
-                </button>
-                <button class="table__action-btn table__action-btn--delete" data-delete="${absence.id}">
-                    Eliminar
-                </button>
-                <button class="table__action-btn table__action-btn--view" data-view="${absence.studentId}">
-                    Ver Detalle
-                </button>
-            </td>
-        `;
-        
-        tableBody.appendChild(row);
-    });
+        // Add rows for each absence
+        for (const absence of absences) {
+            const student = students.find(s => s.id === absence.student_id);
+            const course = courses.find(c => c.id === absence.course_id);
+            
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${student ? student.name : 'Estudiante no encontrado'}</td>
+                <td>${course ? course.name : 'Curso no encontrado'}</td>
+                <td>${getAbsenceTypeLabel(absence.type)}</td>
+                <td>${absence.date}</td>
+                <td>${absence.situation}</td>
+                <td class="table__actions">
+                    <button class="table__action-btn table__action-btn--edit" data-edit="${absence.id}">
+                        Editar
+                    </button>
+                    <button class="table__action-btn table__action-btn--delete" data-delete="${absence.id}">
+                        Eliminar
+                    </button>
+                    <button class="table__action-btn table__action-btn--view" data-view="${absence.student_id}">
+                        Ver Detalle
+                    </button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+        }
+    } catch (error) {
+        console.error('Error loading absences table:', error);
+    }
 }
 
 /**
@@ -174,110 +190,133 @@ function setupEventListeners() {
  * Handle absence form submission
  * @param {Event} e - Form submission event
  */
-function handleAbsenceSubmit(e) {
+async function handleAbsenceSubmit(e) {
     e.preventDefault();
     
-    // Get form values
-    const studentId = document.getElementById('absenceStudent').value;
-    const courseId = document.getElementById('absenceCourse').value;
-    const type = parseInt(document.getElementById('absenceType').value);
-    const date = document.getElementById('absenceDate').value;
-    const category = document.getElementById('absenceCategory').value.trim();
-    const situation = document.getElementById('absenceSituation').value.trim();
-    const sanction = document.getElementById('absenceSanction').value.trim();
-    const comments = document.getElementById('absenceComments').value.trim();
-    
-    // Validate input
-    if (!studentId || !courseId || !type || !date || !category || !situation || !sanction) {
-        alert('Por favor completa todos los campos obligatorios');
-        return;
+    try {
+        // Get form values
+        const studentId = document.getElementById('absenceStudent').value;
+        const courseId = document.getElementById('absenceCourse').value;
+        const type = parseInt(document.getElementById('absenceType').value);
+        const date = document.getElementById('absenceDate').value;
+        const category = document.getElementById('absenceCategory').value.trim();
+        const situation = document.getElementById('absenceSituation').value.trim();
+        const sanction = document.getElementById('absenceSanction').value.trim();
+        const comments = document.getElementById('absenceComments').value.trim();
+        
+        // Validate input
+        if (!studentId || !courseId || !type || !date || !category || !situation || !sanction) {
+            alert('Por favor completa todos los campos obligatorios');
+            return;
+        }
+        
+        // Create new absence
+        const newAbsence = {
+            id: 'absence-' + Date.now(),
+            student_id: studentId,
+            course_id: courseId,
+            type: type,
+            category: category,
+            situation: situation,
+            sanction: sanction,
+            date: date,
+            comments: comments
+        };
+        
+        // Save absence
+        const result = await createAbsence(newAbsence);
+        if (!result) {
+            alert('Error al registrar la falta');
+            return;
+        }
+        
+        // Reset form
+        document.getElementById('absenceForm').reset();
+        
+        // Reload absences table
+        await loadAbsencesTable();
+        
+        // Show success message
+        alert('Falta registrada correctamente');
+    } catch (error) {
+        console.error('Error handling absence submission:', error);
+        alert('Error al registrar la falta');
     }
-    
-    // Create new absence
-    const newAbsence = {
-        id: 'absence-' + Date.now(),
-        studentId: studentId,
-        courseId: courseId,
-        type: type,
-        category: category,
-        situation: situation,
-        sanction: sanction,
-        date: date,
-        comments: comments
-    };
-    
-    // Save absence
-    createAbsence(newAbsence);
-    
-    // Reset form
-    document.getElementById('absenceForm').reset();
-    
-    // Reload absences table
-    loadAbsencesTable();
-    
-    // Show success message
-    alert('Falta registrada correctamente');
 }
 
 /**
  * Open edit absence modal
  * @param {string} absenceId - Absence ID to edit
  */
-function editAbsence(absenceId) {
-    const absence = getAbsenceById(absenceId);
-    if (!absence) return;
-    
-    // Fill form with absence data
-    document.getElementById('editAbsenceId').value = absence.id;
-    document.getElementById('editAbsenceType').value = absence.type;
-    document.getElementById('editAbsenceCategory').value = absence.category;
-    document.getElementById('editAbsenceSituation').value = absence.situation;
-    document.getElementById('editAbsenceSanction').value = absence.sanction;
-    document.getElementById('editAbsenceComments').value = absence.comments;
-    
-    // Open modal
-    document.getElementById('editAbsenceModal').classList.add('modal--open');
+async function editAbsence(absenceId) {
+    try {
+        const absence = await getAbsenceById(absenceId);
+        if (!absence) return;
+        
+        // Fill form with absence data
+        document.getElementById('editAbsenceId').value = absence.id;
+        document.getElementById('editAbsenceType').value = absence.type;
+        document.getElementById('editAbsenceCategory').value = absence.category;
+        document.getElementById('editAbsenceSituation').value = absence.situation;
+        document.getElementById('editAbsenceSanction').value = absence.sanction;
+        document.getElementById('editAbsenceComments').value = absence.comments || '';
+        
+        // Open modal
+        document.getElementById('editAbsenceModal').classList.add('modal--open');
+    } catch (error) {
+        console.error('Error editing absence:', error);
+        alert('Error al cargar los datos de la falta');
+    }
 }
 
 /**
  * Save edited absence
  */
-function saveEditAbsence() {
-    const id = document.getElementById('editAbsenceId').value;
-    const type = parseInt(document.getElementById('editAbsenceType').value);
-    const category = document.getElementById('editAbsenceCategory').value.trim();
-    const situation = document.getElementById('editAbsenceSituation').value.trim();
-    const sanction = document.getElementById('editAbsenceSanction').value.trim();
-    const comments = document.getElementById('editAbsenceComments').value.trim();
-    
-    // Validate input
-    if (!type || !category || !situation || !sanction) {
-        alert('Por favor completa todos los campos obligatorios');
-        return;
+async function saveEditAbsence() {
+    try {
+        const id = document.getElementById('editAbsenceId').value;
+        const type = parseInt(document.getElementById('editAbsenceType').value);
+        const category = document.getElementById('editAbsenceCategory').value.trim();
+        const situation = document.getElementById('editAbsenceSituation').value.trim();
+        const sanction = document.getElementById('editAbsenceSanction').value.trim();
+        const comments = document.getElementById('editAbsenceComments').value.trim();
+        
+        // Validate input
+        if (!type || !category || !situation || !sanction) {
+            alert('Por favor completa todos los campos obligatorios');
+            return;
+        }
+        
+        // Get existing absence
+        const absence = await getAbsenceById(id);
+        if (!absence) return;
+        
+        // Update absence
+        const updatedAbsence = {
+            id: id,
+            student_id: absence.student_id,
+            course_id: absence.course_id,
+            type: type,
+            category: category,
+            situation: situation,
+            sanction: sanction,
+            date: absence.date,
+            comments: comments
+        };
+        
+        const result = await updateAbsence(id, updatedAbsence);
+        if (!result) {
+            alert('Error al actualizar la falta');
+            return;
+        }
+        
+        // Close modal and refresh table
+        closeEditAbsenceModal();
+        await loadAbsencesTable();
+    } catch (error) {
+        console.error('Error saving edited absence:', error);
+        alert('Error al actualizar la falta');
     }
-    
-    // Get existing absence
-    const absence = getAbsenceById(id);
-    if (!absence) return;
-    
-    // Update absence
-    const updatedAbsence = {
-        id: id,
-        studentId: absence.studentId,
-        courseId: absence.courseId,
-        type: type,
-        category: category,
-        situation: situation,
-        sanction: sanction,
-        date: absence.date,
-        comments: comments
-    };
-    
-    updateAbsence(id, updatedAbsence);
-    
-    // Close modal and refresh table
-    closeEditAbsenceModal();
-    loadAbsencesTable();
 }
 
 /**
@@ -291,10 +330,20 @@ function closeEditAbsenceModal() {
  * Delete absence with confirmation
  * @param {string} absenceId - Absence ID to delete
  */
-function deleteAbsenceConfirm(absenceId) {
+async function deleteAbsenceConfirm(absenceId) {
     if (confirm('¿Estás seguro de que deseas eliminar esta falta?')) {
-        deleteAbsence(absenceId);
-        loadAbsencesTable();
+        try {
+            const result = await deleteAbsence(absenceId);
+            if (!result) {
+                alert('Error al eliminar la falta');
+                return;
+            }
+            
+            await loadAbsencesTable();
+        } catch (error) {
+            console.error('Error deleting absence:', error);
+            alert('Error al eliminar la falta');
+        }
     }
 }
 
@@ -302,12 +351,17 @@ function deleteAbsenceConfirm(absenceId) {
  * View student detail
  * @param {string} studentId - Student ID to view
  */
-function viewStudentDetail(studentId) {
-    // In a real application, this would navigate to the student detail page
-    // For now, we'll just show an alert with student information
-    const student = getStudentById(studentId);
-    if (student) {
-        alert(`Detalles del estudiante:\nNombre: ${student.name}\nEmail: ${student.email}`);
+async function viewStudentDetail(studentId) {
+    try {
+        // In a real application, this would navigate to the student detail page
+        // For now, we'll just show an alert with student information
+        const student = await getStudentById(studentId);
+        if (student) {
+            alert(`Detalles del estudiante:\nNombre: ${student.name}\nEmail: ${student.email}`);
+        }
+    } catch (error) {
+        console.error('Error viewing student detail:', error);
+        alert('Error al cargar los datos del estudiante');
     }
 }
 
@@ -377,68 +431,9 @@ function getCurrentUser() {
 }
 
 /**
- * Get all students from storage
- * @returns {Array} Array of student objects
+ * Logout function
  */
-function getAllStudents() {
-    return dataManager.getAllStudents();
-}
-
-/**
- * Get student by ID
- * @param {string} id - Student ID
- * @returns {Object|null} Student object or null if not found
- */
-function getStudentById(id) {
-    return dataManager.getStudentById(id);
-}
-
-/**
- * Get all courses from storage
- * @returns {Array} Array of course objects
- */
-function getAllCourses() {
-    return dataManager.getAllCourses();
-}
-
-/**
- * Get all absences from storage
- * @returns {Array} Array of absence objects
- */
-function getAllAbsences() {
-    return dataManager.getAllAbsences();
-}
-
-/**
- * Get absence by ID
- * @param {string} id - Absence ID
- * @returns {Object|null} Absence object or null if not found
- */
-function getAbsenceById(id) {
-    return dataManager.getAbsenceById(id);
-}
-
-/**
- * Create a new absence
- * @param {Object} absence - Absence object to create
- */
-function createAbsence(absence) {
-    dataManager.createAbsence(absence);
-}
-
-/**
- * Update absence by ID
- * @param {string} id - Absence ID
- * @param {Object} updatedAbsence - Updated absence object
- */
-function updateAbsence(id, updatedAbsence) {
-    dataManager.updateAbsence(id, updatedAbsence);
-}
-
-/**
- * Delete absence by ID
- * @param {string} id - Absence ID
- */
-function deleteAbsence(id) {
-    dataManager.deleteAbsence(id);
+function logout() {
+    localStorage.removeItem('ieve_currentUser');
+    window.location.href = 'login.html';
 }

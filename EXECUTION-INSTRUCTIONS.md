@@ -1,21 +1,34 @@
 # Execution Instructions
 
 ## Overview
-This document provides instructions on how to execute and use the updated IEVE absence reporting system that now uses a centralized JSON data file and DataManager class instead of localStorage.
+This document provides instructions on how to execute and use the updated IEVE absence reporting system that now uses a MySQL database with a Node.js backend API instead of localStorage or JSON files.
 
 ## System Architecture
 The system now uses:
-1. `data.json` - A single JSON file containing all application data
-2. `js/data-manager.js` - A DataManager class that handles all data operations
-3. Updated JavaScript view files that use the DataManager instead of direct localStorage access
+1. `MySQL database` - A database containing all application data
+2. `Node.js backend` - A backend server that provides REST API endpoints
+3. `js/data-manager.js` - A DataManager class that handles all data operations through API calls
+4. Updated JavaScript view files that use the DataManager instead of direct localStorage access
 
 ## How to Execute the System
 
 ### 1. Prerequisites
 - A modern web browser (Chrome, Firefox, Edge, Safari)
+- Node.js installed (version 12 or higher)
+- MySQL database server
 - A local web server (optional but recommended for full functionality)
 
-### 2. Running the Application
+### 2. Database Setup
+1. Create a MySQL database
+2. Execute the `database-init.sql` script to initialize the database with initial data
+3. Update the database connection parameters in `backend/.env` if needed
+
+### 3. Backend Setup
+1. Navigate to the `backend` directory
+2. Run `npm install` to install dependencies
+3. Run `npm start` to start the backend server
+
+### 4. Running the Application
 1. Open the `index.html` file in your web browser
 2. The application will automatically redirect you to the login page
 3. Use one of the following credentials to log in:
@@ -23,11 +36,11 @@ The system now uses:
    - Teacher: Username "teacher1", Role "Maestro"
    - Student: Username "student1", Role "Alumno"
 
-### 3. Data Management
+### 5. Data Management
 All data is now managed through the DataManager class:
-- Data is initially loaded from `data.json`
-- Changes are saved to localStorage as a fallback mechanism
-- In a production environment, this would connect to a backend server
+- Data is loaded from the MySQL database through the backend API
+- Changes are saved directly to the database
+- The system no longer uses localStorage as a fallback
 
 ## DataManager Methods
 
@@ -62,13 +75,24 @@ All data is now managed through the DataManager class:
 
 ## File Structure
 ```
-├── data.json                 # Centralized data file
-├── index.html                # Main entry point
-├── login.html                # Login page
-├── admin-dashboard.html      # Admin dashboard
-├── student-dashboard.html    # Student dashboard
-├── report.html               # Report generation page
-├── css/                      # Stylesheets
+├── backend/                 # Backend Node.js application
+│   ├── server.js             # Main server file
+│   ├── package.json          # Backend dependencies
+│   ├── .env                  # Database configuration
+│   ├── config/
+│   │   └── db.js             # Database connection
+│   └── controllers/
+│       ├── studentController.js
+│       ├── courseController.js
+│       ├── absenceController.js
+│       └── userController.js
+├── database-init.sql        # Database initialization script
+├── index.html               # Main entry point
+├── login.html               # Login page
+├── admin-dashboard.html     # Admin dashboard
+├── student-dashboard.html   # Student dashboard
+├── report.html              # Report generation page
+├── css/                     # Stylesheets
 │   ├── base.css
 │   ├── components.css
 │   ├── layout.css
@@ -93,17 +117,17 @@ All data is now managed through the DataManager class:
 
 ## Updating Data
 To update the initial data in the system:
-1. Edit the `data.json` file directly
-2. The changes will be loaded when the application starts
-3. For existing users, data will be loaded from localStorage if available
+1. Connect to your MySQL database
+2. Modify the data directly in the database tables
+3. The changes will be loaded when the application starts
 
 ## Troubleshooting
-1. If data doesn't load, check that `data.json` is in the root directory
-2. If changes aren't saved, check browser console for errors
+1. If data doesn't load, check that the backend server is running
+2. If changes aren't saved, check the backend server logs for errors
 3. Clear browser cache if you're not seeing updates
 
 ## Development Notes
 1. All view files now use the DataManager instead of direct localStorage access
-2. The DataManager provides a consistent interface for all data operations
-3. Data is still saved to localStorage as a fallback mechanism
-4. In a production environment, the DataManager would connect to a backend API
+2. The DataManager provides a consistent interface for all data operations through API calls
+3. Data is saved directly to the MySQL database
+4. The backend server must be running for the application to work

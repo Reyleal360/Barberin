@@ -3,7 +3,7 @@
  * REPORTE DE FALTAS IEVE
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Check if user is authenticated and is teacher
     const currentUser = getCurrentUser();
     if (!currentUser || currentUser.role !== 'teacher') {
@@ -22,40 +22,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize student detail view
-    initializeStudentDetail(studentId);
+    await initializeStudentDetail(studentId);
 });
 
 /**
  * Initialize the student detail view
  * @param {string} studentId - Student ID to display
  */
-function initializeStudentDetail(studentId) {
-    // Load student information
-    loadStudentInfo(studentId);
-    
-    // Load absences history
-    loadAbsencesHistory(studentId);
+async function initializeStudentDetail(studentId) {
+    try {
+        // Load student information
+        await loadStudentInfo(studentId);
+        
+        // Load absences history
+        await loadAbsencesHistory(studentId);
+    } catch (error) {
+        console.error('Error initializing student detail:', error);
+        alert('Error al cargar los datos del estudiante');
+    }
 }
 
 /**
  * Load student information
  * @param {string} studentId - Student ID
  */
-function loadStudentInfo(studentId) {
-    const student = getStudentById(studentId);
-    
-    if (student) {
-        document.getElementById('studentName').textContent = student.name;
-        document.getElementById('studentEmail').textContent = student.email;
+async function loadStudentInfo(studentId) {
+    try {
+        const student = await getStudentById(studentId);
         
-        // Get course name
-        const course = getCourseById(student.course);
-        document.getElementById('studentCourse').textContent = course ? course.name : 'Curso no encontrado';
-        
-        document.getElementById('studentEnrollmentDate').textContent = student.enrollmentDate;
-    } else {
-        alert('Estudiante no encontrado');
-        window.location.href = 'teacher-dashboard.html';
+        if (student) {
+            document.getElementById('studentName').textContent = student.name;
+            document.getElementById('studentEmail').textContent = student.email;
+            
+            // Get course name
+            const course = await getCourseById(student.course_id);
+            document.getElementById('studentCourse').textContent = course ? course.name : 'Curso no encontrado';
+            
+            document.getElementById('studentEnrollmentDate').textContent = student.enrollment_date;
+        } else {
+            alert('Estudiante no encontrado');
+            window.location.href = 'teacher-dashboard.html';
+        }
+    } catch (error) {
+        console.error('Error loading student info:', error);
+        alert('Error al cargar los datos del estudiante');
     }
 }
 
@@ -63,84 +73,89 @@ function loadStudentInfo(studentId) {
  * Load absences history
  * @param {string} studentId - Student ID
  */
-function loadAbsencesHistory(studentId) {
-    const absences = getAbsencesByStudentId(studentId);
-    const courses = getAllCourses();
-    const absencesList = document.getElementById('absencesList');
-    const noAbsencesMessage = document.getElementById('noAbsencesMessage');
-    
-    // Clear existing content
-    absencesList.innerHTML = '';
-    
-    // Show/hide no absences message
-    if (absences.length === 0) {
-        noAbsencesMessage.style.display = 'block';
-        return;
-    }
-    
-    noAbsencesMessage.style.display = 'none';
-    
-    // Add cards for each absence
-    absences.forEach(absence => {
-        const course = courses.find(c => c.id === absence.courseId);
+async function loadAbsencesHistory(studentId) {
+    try {
+        const absences = await getAbsencesByStudentId(studentId);
+        const courses = await getAllCourses();
+        const absencesList = document.getElementById('absencesList');
+        const noAbsencesMessage = document.getElementById('noAbsencesMessage');
         
-        const card = document.createElement('div');
-        card.className = 'absence-card';
+        // Clear existing content
+        absencesList.innerHTML = '';
         
-        // Get type label and badge class
-        const typeLabel = getAbsenceTypeLabel(absence.type);
-        let badgeClass = '';
-        switch(absence.type) {
-            case 1: // Tardanza
-                badgeClass = 'badge--tardanza';
-                break;
-            case 2: // Ausencia justificada
-                badgeClass = 'badge--justificada';
-                break;
-            case 3: // Ausencia injustificada
-                badgeClass = 'badge--injustificada';
-                break;
+        // Show/hide no absences message
+        if (absences.length === 0) {
+            noAbsencesMessage.style.display = 'block';
+            return;
         }
         
-        card.innerHTML = `
-            <div class="absence-card__header">
-                <h3 class="absence-card__title">${typeLabel}</h3>
-                <span class="absence-card__date">${absence.date}</span>
-            </div>
-            <div class="absence-card__body">
-                <div class="absence-card__item">
-                    <div class="absence-card__label">Curso</div>
-                    <div class="absence-card__value">${course ? course.name : 'Curso no encontrado'}</div>
-                </div>
-                <div class="absence-card__item">
-                    <div class="absence-card__label">Categoría</div>
-                    <div class="absence-card__value">${absence.category}</div>
-                </div>
-                <div class="absence-card__item">
-                    <div class="absence-card__label">Situación</div>
-                    <div class="absence-card__value">${absence.situation}</div>
-                </div>
-                <div class="absence-card__item">
-                    <div class="absence-card__label">Sanción</div>
-                    <div class="absence-card__value">${absence.sanction}</div>
-                </div>
-                <div class="absence-card__item absence-card__comments">
-                    <div class="absence-card__label">Comentarios</div>
-                    <div class="absence-card__value">${absence.comments || 'Sin comentarios'}</div>
-                </div>
-            </div>
-            <div class="absence-card__actions">
-                <button class="absence-card__action-btn absence-card__action-btn--edit" data-edit="${absence.id}">
-                    Editar
-                </button>
-                <button class="absence-card__action-btn absence-card__action-btn--delete" data-delete="${absence.id}">
-                    Eliminar
-                </button>
-            </div>
-        `;
+        noAbsencesMessage.style.display = 'none';
         
-        absencesList.appendChild(card);
-    });
+        // Add cards for each absence
+        for (const absence of absences) {
+            const course = courses.find(c => c.id === absence.course_id);
+            
+            const card = document.createElement('div');
+            card.className = 'absence-card';
+            
+            // Get type label and badge class
+            const typeLabel = getAbsenceTypeLabel(absence.type);
+            let badgeClass = '';
+            switch(absence.type) {
+                case 1: // Tardanza
+                    badgeClass = 'badge--tardanza';
+                    break;
+                case 2: // Ausencia justificada
+                    badgeClass = 'badge--justificada';
+                    break;
+                case 3: // Ausencia injustificada
+                    badgeClass = 'badge--injustificada';
+                    break;
+            }
+            
+            card.innerHTML = `
+                <div class="absence-card__header">
+                    <h3 class="absence-card__title">${typeLabel}</h3>
+                    <span class="absence-card__date">${absence.date}</span>
+                </div>
+                <div class="absence-card__body">
+                    <div class="absence-card__item">
+                        <div class="absence-card__label">Curso</div>
+                        <div class="absence-card__value">${course ? course.name : 'Curso no encontrado'}</div>
+                    </div>
+                    <div class="absence-card__item">
+                        <div class="absence-card__label">Categoría</div>
+                        <div class="absence-card__value">${absence.category}</div>
+                    </div>
+                    <div class="absence-card__item">
+                        <div class="absence-card__label">Situación</div>
+                        <div class="absence-card__value">${absence.situation}</div>
+                    </div>
+                    <div class="absence-card__item">
+                        <div class="absence-card__label">Sanción</div>
+                        <div class="absence-card__value">${absence.sanction}</div>
+                    </div>
+                    <div class="absence-card__item absence-card__comments">
+                        <div class="absence-card__label">Comentarios</div>
+                        <div class="absence-card__value">${absence.comments || 'Sin comentarios'}</div>
+                    </div>
+                </div>
+                <div class="absence-card__actions">
+                    <button class="absence-card__action-btn absence-card__action-btn--edit" data-edit="${absence.id}">
+                        Editar
+                    </button>
+                    <button class="absence-card__action-btn absence-card__action-btn--delete" data-delete="${absence.id}">
+                        Eliminar
+                    </button>
+                </div>
+            `;
+            
+            absencesList.appendChild(card);
+        }
+    } catch (error) {
+        console.error('Error loading absences history:', error);
+        alert('Error al cargar el historial de faltas');
+    }
 }
 
 /**
@@ -171,36 +186,9 @@ function getCurrentUser() {
 }
 
 /**
- * Get student by ID
- * @param {string} id - Student ID
- * @returns {Object|null} Student object or null if not found
+ * Logout function
  */
-function getStudentById(id) {
-    return dataManager.getStudentById(id);
-}
-
-/**
- * Get course by ID
- * @param {string} id - Course ID
- * @returns {Object|null} Course object or null if not found
- */
-function getCourseById(id) {
-    return dataManager.getCourseById(id);
-}
-
-/**
- * Get all absences from storage
- * @returns {Array} Array of absence objects
- */
-function getAllAbsences() {
-    return dataManager.getAllAbsences();
-}
-
-/**
- * Get absences by student ID
- * @param {string} studentId - Student ID
- * @returns {Array} Array of absence objects for the student
- */
-function getAbsencesByStudentId(studentId) {
-    return dataManager.getAbsencesByStudentId(studentId);
+function logout() {
+    localStorage.removeItem('ieve_currentUser');
+    window.location.href = 'login.html';
 }

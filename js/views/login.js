@@ -17,21 +17,26 @@ document.addEventListener('DOMContentLoaded', function() {
  * Handle login form submission
  * @param {Event} e - Form submission event
  */
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
     
-    // Get form values
-    const username = document.getElementById('username').value.trim();
-    const role = document.querySelector('input[name="role"]:checked').value;
-    
-    // Validate input
-    if (!username) {
-        alert('Por favor ingresa tu nombre de usuario');
-        return;
+    try {
+        // Get form values
+        const username = document.getElementById('username').value.trim();
+        const role = document.querySelector('input[name="role"]:checked').value;
+        
+        // Validate input
+        if (!username) {
+            alert('Por favor ingresa tu nombre de usuario');
+            return;
+        }
+        
+        // Authenticate user
+        await authenticateUser(username, role);
+    } catch (error) {
+        console.error('Error handling login:', error);
+        alert('Error al iniciar sesión');
     }
-    
-    // Authenticate user
-    authenticateUser(username, role);
 }
 
 /**
@@ -39,27 +44,32 @@ function handleLogin(e) {
  * @param {string} username - Username
  * @param {string} role - User role
  */
-function authenticateUser(username, role) {
-    // In a real application, this would be an API call
-    // For this mock implementation, we'll check against our mock users
-    
-    const user = getUserByUsername(username);
-    
-    if (!user) {
-        alert('Usuario no encontrado');
-        return;
+async function authenticateUser(username, role) {
+    try {
+        // In a real application, this would be an API call
+        // For this implementation, we'll check against our users in the database
+        
+        const user = await getUserByUsername(username);
+        
+        if (!user) {
+            alert('Usuario no encontrado');
+            return;
+        }
+        
+        if (user.role !== role) {
+            alert('Rol incorrecto para este usuario');
+            return;
+        }
+        
+        // Set current user in localStorage
+        setCurrentUser(user);
+        
+        // Redirect to appropriate dashboard
+        redirectToDashboard(role);
+    } catch (error) {
+        console.error('Error authenticating user:', error);
+        alert('Error al autenticar el usuario');
     }
-    
-    if (user.role !== role) {
-        alert('Rol incorrecto para este usuario');
-        return;
-    }
-    
-    // Set current user in localStorage
-    setCurrentUser(user);
-    
-    // Redirect to appropriate dashboard
-    redirectToDashboard(role);
 }
 
 /**
@@ -67,8 +77,8 @@ function authenticateUser(username, role) {
  * @param {string} username - Username
  * @returns {Object|null} User object or null if not found
  */
-function getUserByUsername(username) {
-    return dataManager.getUserByUsername(username);
+async function getUserByUsername(username) {
+    return await dataManager.getUserByUsername(username);
 }
 
 /**
