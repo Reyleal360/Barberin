@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Profesor - REPORTE DE FALTAS IEVE</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/views/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar__container">
+                <a href="teacher-dashboard.html" class="navbar__brand">REPORTE DE FALTAS IEVE</a>
+                <ul class="navbar__menu">
+                    <li class="navbar__item">
+                        <a href="teacher-dashboard.html" class="navbar__link navbar__link--active">Inicio</a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="#" class="navbar__link" data-logout>Cerrar Sesión</a>
+                    </li>
+                </ul>
+                <button class="navbar__toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        
+        <main class="main">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Panel del Profesor</h1>
+                <p class="dashboard-subtitle">Registra y gestiona las faltas de los estudiantes</p>
+            </div>
+            
+            <!-- Absence Statistics -->
+            <div class="grid grid--cols-1 grid--tablet-cols-3 mb-lg">
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>⏱️</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Tardanzas</h3>
+                            <p class="stat-card__value" id="tardinessCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>✅</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Ausencias Justificadas</h3>
+                            <p class="stat-card__value" id="justifiedCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>❌</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Ausencias Injustificadas</h3>
+                            <p class="stat-card__value" id="unjustifiedCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- General Statistics -->
+            <div class="grid grid--cols-1 grid--tablet-cols-3 mb-lg">
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>📊</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Total de Faltas</h3>
+                            <p class="stat-card__value" id="totalAbsences">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>👥</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Total de Estudiantes</h3>
+                            <p class="stat-card__value" id="totalStudents">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card--doodle">
+                    <div class="stat-card">
+                        <div class="stat-card__icon bg-primary-light text-primary">
+                            <span>📈</span>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Promedio de Faltas por Estudiante</h3>
+                            <p class="stat-card__value" id="averageAbsences">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Student with Most Absences -->
+            <div class="card card--doodle mb-lg">
+                <div class="stat-card">
+                    <div class="stat-card__icon bg-primary-light text-primary">
+                        <span>🏆</span>
+                    </div>
+                    <div class="stat-card__content">
+                        <h3 class="stat-card__title">Estudiante con Más Faltas</h3>
+                        <p class="stat-card__value" id="studentWithMostAbsences">-</p>
+                        <p class="stat-card__subtitle" id="maxAbsencesCount">0 faltas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Absence Statistics Chart -->
+            <div class="card card--doodle mb-lg">
+                <div class="card__header">
+                    <h2 class="card__title">Gráfico de Faltas</h2>
+                </div>
+                <div class="card__body">
+                    <canvas id="absenceChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+            
+            <!-- Absence Summary by Course -->
+            <div class="card card--doodle mb-lg">
+                <div class="card__header">
+                    <h2 class="card__title">Resumen de Faltas por Curso</h2>
+                </div>
+                <div class="card__body">
+                    <div class="table-container">
+                        <table class="table table--striped" id="courseSummaryTable">
+                            <thead>
+                                <tr>
+                                    <th>Curso</th>
+                                    <th>Total de Faltas</th>
+                                    <th>Tardanzas</th>
+                                    <th>Ausencias Justificadas</th>
+                                    <th>Ausencias Injustificadas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="courseSummaryTableBody">
+                                <!-- Course summary rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Register Absence Form -->
+            <div class="card card--doodle mb-lg">
+                <div class="card__header">
+                    <h2 class="card__title">Registrar Falta</h2>
+                </div>
+                <div class="card__body">
+                    <form id="absenceForm">
+                        <div class="grid grid--cols-1 grid--tablet-cols-2">
+                            <div class="form-group">
+                                <label class="form-label">Estudiante</label>
+                                <input type="text" id="studentSearch" class="form-control mb-sm" placeholder="Buscar estudiante...">
+                                <select id="absenceStudent" class="form-control" required>
+                                    <option value="">Selecciona un estudiante</option>
+                                    <!-- Student options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Curso</label>
+                                <select id="absenceCourse" class="form-control" required>
+                                    <option value="">Selecciona un curso</option>
+                                    <!-- Course options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Tipo de Falta</label>
+                                <select id="absenceType" class="form-control" required>
+                                    <option value="">Selecciona un tipo</option>
+                                    <option value="1">Tardanza</option>
+                                    <option value="2">Ausencia justificada</option>
+                                    <option value="3">Ausencia injustificada</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Fecha</label>
+                                <input type="date" id="absenceDate" class="form-control" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Categoría</label>
+                                <input type="text" id="absenceCategory" class="form-control" placeholder="Ingresa la categoría" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Situación</label>
+                                <input type="text" id="absenceSituation" class="form-control" placeholder="Ingresa la situación" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Sanción</label>
+                                <input type="text" id="absenceSanction" class="form-control" placeholder="Ingresa la sanción" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Comentarios</label>
+                            <textarea id="absenceComments" class="form-control" rows="3" placeholder="Agrega comentarios adicionales..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn--primary">Registrar Falta</button>
+                            <button type="reset" class="btn btn--secondary ml-sm">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Absences List -->
+            <div class="card card--doodle">
+                <div class="card__header">
+                    <h2 class="card__title">Lista de Faltas</h2>
+                    <div class="flex flex--align-center">
+                        <div class="form-group mr-sm">
+                            <label class="form-label">Desde:</label>
+                            <input type="date" id="startDate" class="form-control">
+                        </div>
+                        <div class="form-group mr-sm">
+                            <label class="form-label">Hasta:</label>
+                            <input type="date" id="endDate" class="form-control">
+                        </div>
+                        <button id="filterByDate" class="btn btn--primary mr-sm">Filtrar</button>
+                        <button id="resetDateFilter" class="btn btn--secondary mr-sm">Restablecer</button>
+                        <button id="exportCSV" class="btn btn--secondary">Exportar a CSV</button>
+                    </div>
+                </div>
+                <div class="card__body">
+                    <div class="flex flex--justify-between mb-md">
+                        <div class="search-box">
+                            <input type="text" id="absenceSearch" class="form-control" placeholder="Buscar faltas...">
+                        </div>
+                        <div class="form-group">
+                            <select id="absenceFilter" class="form-control">
+                                <option value="">Todos los tipos</option>
+                                <option value="1">Tardanza</option>
+                                <option value="2">Ausencia justificada</option>
+                                <option value="3">Ausencia injustificada</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table table--striped" id="absencesTable">
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>Curso</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Situación</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="absencesTableBody">
+                                <!-- Absence rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p class="footer__text">Sistema de Reporte de Faltas IEVE &copy; 2025</p>
+        </footer>
+    </div>
+    
+    <!-- Student Detail Modal -->
+    <div class="modal" id="studentDetailModal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title">Detalles del Estudiante</h3>
+                <button class="modal__close">&times;</button>
+            </div>
+            <div class="modal__body">
+                <div class="grid grid--cols-1 grid--tablet-cols-2">
+                    <div class="info-item">
+                        <label class="form-label">Nombre:</label>
+                        <p id="detailStudentName" class="info-value">-</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <label class="form-label">Email:</label>
+                        <p id="detailStudentEmail" class="info-value">-</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <label class="form-label">Curso:</label>
+                        <p id="detailStudentCourse" class="info-value">-</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <label class="form-label">Fecha de Inscripción:</label>
+                        <p id="detailStudentEnrollmentDate" class="info-value">-</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <label class="form-label">Total de Faltas:</label>
+                        <p id="detailStudentTotalAbsences" class="info-value">0</p>
+                    </div>
+                </div>
+                
+                <!-- Student Absence Summary -->
+                <div class="grid grid--cols-1 grid--tablet-cols-3 mt-md">
+                    <div class="card card--doodle">
+                        <div class="stat-card">
+                            <div class="stat-card__icon bg-primary-light text-primary">
+                                <span>⏱️</span>
+                            </div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__title">Tardanzas</h3>
+                                <p class="stat-card__value" id="detailStudentTardiness">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card card--doodle">
+                        <div class="stat-card">
+                            <div class="stat-card__icon bg-primary-light text-primary">
+                                <span>✅</span>
+                            </div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__title">Ausencias Justificadas</h3>
+                                <p class="stat-card__value" id="detailStudentJustified">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card card--doodle">
+                        <div class="stat-card">
+                            <div class="stat-card__icon bg-primary-light text-primary">
+                                <span>❌</span>
+                            </div>
+                            <div class="stat-card__content">
+                                <h3 class="stat-card__title">Ausencias Injustificadas</h3>
+                                <p class="stat-card__value" id="detailStudentUnjustified">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Student Absences History -->
+                <div class="mt-lg">
+                    <h4 class="card__title">Historial de Faltas</h4>
+                    <div class="table-container">
+                        <table class="table table--striped" id="studentAbsencesTable">
+                            <thead>
+                                <tr>
+                                    <th>Curso</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Situación</th>
+                                    <th>Sanción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentAbsencesTableBody">
+                                <!-- Absence rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" id="closeStudentDetailBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Absence Modal -->
+    <div class="modal" id="editAbsenceModal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title">Editar Falta</h3>
+                <button class="modal__close">&times;</button>
+            </div>
+            <div class="modal__body">
+                <form id="editAbsenceForm">
+                    <input type="hidden" id="editAbsenceId">
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Falta</label>
+                        <select id="editAbsenceType" class="form-control" required>
+                            <option value="1">Tardanza</option>
+                            <option value="2">Ausencia justificada</option>
+                            <option value="3">Ausencia injustificada</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Categoría</label>
+                        <input type="text" id="editAbsenceCategory" class="form-control" placeholder="Ingresa la categoría" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Situación</label>
+                        <input type="text" id="editAbsenceSituation" class="form-control" placeholder="Ingresa la situación" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sanción</label>
+                        <input type="text" id="editAbsenceSanction" class="form-control" placeholder="Ingresa la sanción" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Comentarios</label>
+                        <textarea id="editAbsenceComments" class="form-control" rows="3" placeholder="Agrega comentarios adicionales..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" id="cancelEditAbsenceBtn">Cancelar</button>
+                <button class="btn btn--primary" id="saveEditAbsenceBtn">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/data-manager.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/views/teacher-dashboard.js"></script>
+</body>
+</html>
