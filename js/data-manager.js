@@ -57,12 +57,15 @@ class DataManager {
             if (response.ok) {
                 return await response.json();
             } else {
-                console.error('Failed to fetch students');
-                return [];
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
             console.error('Error fetching students:', error);
-            return [];
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                throw new Error('No se puede conectar al servidor. Verifica que el backend esté ejecutándose.');
+            }
+            throw error;
         }
     }
 
@@ -166,12 +169,15 @@ class DataManager {
             if (response.ok) {
                 return await response.json();
             } else {
-                console.error('Failed to fetch courses');
-                return [];
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
             console.error('Error fetching courses:', error);
-            return [];
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                throw new Error('No se puede conectar al servidor. Verifica que el backend esté ejecutándose.');
+            }
+            throw error;
         }
     }
 
@@ -259,12 +265,15 @@ class DataManager {
             if (response.ok) {
                 return await response.json();
             } else {
-                console.error('Failed to fetch absences');
-                return [];
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
             console.error('Error fetching absences:', error);
-            return [];
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                throw new Error('No se puede conectar al servidor. Verifica que el backend esté ejecutándose.');
+            }
+            throw error;
         }
     }
 
@@ -307,16 +316,19 @@ class DataManager {
                 },
                 body: JSON.stringify(absence)
             });
-            
+
             if (response.ok) {
                 return await response.json();
             } else {
-                console.error('Failed to create absence');
-                return null;
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
             console.error('Error creating absence:', error);
-            return null;
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                throw new Error('No se puede conectar al servidor. Verifica que el backend esté ejecutándose.');
+            }
+            throw error;
         }
     }
 
@@ -329,16 +341,19 @@ class DataManager {
                 },
                 body: JSON.stringify(updatedAbsence)
             });
-            
+
             if (response.ok) {
                 return await response.json();
             } else {
-                console.error(`Failed to update absence with id ${id}`);
-                return null;
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
             console.error(`Error updating absence with id ${id}:`, error);
-            return null;
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                throw new Error('No se puede conectar al servidor. Verifica que el backend esté ejecutándose.');
+            }
+            throw error;
         }
     }
 

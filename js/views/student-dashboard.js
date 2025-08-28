@@ -38,7 +38,9 @@ async function initializeDashboard() {
 async function loadStudentInfo() {
     try {
         const currentUser = getCurrentUser();
-        const student = await getStudentById(currentUser.id.replace('user-', 'student-'));
+        // Map user ID to student ID correctly
+        const studentId = currentUser.id.replace('user-student-', 'student-').replace('user-', 'student-');
+        const student = await getStudentById(studentId);
         
         if (student) {
             document.getElementById('studentName').textContent = student.name;
@@ -49,9 +51,21 @@ async function loadStudentInfo() {
             document.getElementById('studentCourse').textContent = course ? course.name : 'Curso no encontrado';
             
             document.getElementById('studentEnrollmentDate').textContent = student.enrollment_date;
+        } else {
+            // Handle case where student is not found
+            document.getElementById('studentName').textContent = 'Estudiante no encontrado';
+            document.getElementById('studentEmail').textContent = '-';
+            document.getElementById('studentCourse').textContent = '-';
+            document.getElementById('studentEnrollmentDate').textContent = '-';
+            alert('No se encontró la información del estudiante. Por favor, contacte al administrador.');
         }
     } catch (error) {
         console.error('Error loading student info:', error);
+        document.getElementById('studentName').textContent = 'Error al cargar';
+        document.getElementById('studentEmail').textContent = 'Error al cargar';
+        document.getElementById('studentCourse').textContent = 'Error al cargar';
+        document.getElementById('studentEnrollmentDate').textContent = 'Error al cargar';
+        alert('Error al cargar la información del estudiante. Por favor, intente nuevamente.');
     }
 }
 
@@ -61,7 +75,8 @@ async function loadStudentInfo() {
 async function loadAbsencesHistory() {
     try {
         const currentUser = getCurrentUser();
-        const studentId = currentUser.id.replace('user-', 'student-');
+        // Map user ID to student ID correctly
+        const studentId = currentUser.id.replace('user-student-', 'student-').replace('user-', 'student-');
         const absences = await getAbsencesByStudentId(studentId);
         const courses = await getAllCourses();
         const tableBody = document.getElementById('studentAbsencesTableBody');
@@ -95,6 +110,10 @@ async function loadAbsencesHistory() {
         }
     } catch (error) {
         console.error('Error loading absences history:', error);
+        // Show error message in table
+        const tableBody = document.getElementById('studentAbsencesTableBody');
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-error">Error al cargar el historial de faltas. Por favor, intente nuevamente.</td></tr>';
+        alert('Error al cargar el historial de faltas. Por favor, intente nuevamente.');
     }
 }
 
@@ -104,7 +123,8 @@ async function loadAbsencesHistory() {
 async function loadAbsenceDropdown() {
     try {
         const currentUser = getCurrentUser();
-        const studentId = currentUser.id.replace('user-', 'student-');
+        // Map user ID to student ID correctly
+        const studentId = currentUser.id.replace('user-student-', 'student-').replace('user-', 'student-');
         const absences = await getAbsencesByStudentId(studentId);
         const courses = await getAllCourses();
         const dropdown = document.getElementById('commentAbsence');
@@ -122,6 +142,9 @@ async function loadAbsenceDropdown() {
         }
     } catch (error) {
         console.error('Error loading absence dropdown:', error);
+        // Show error in dropdown
+        const dropdown = document.getElementById('commentAbsence');
+        dropdown.innerHTML = '<option value="">Error al cargar faltas</option>';
     }
 }
 
@@ -160,16 +183,24 @@ async function handleCommentSubmit(e) {
             return;
         }
         
+        // Show loading state
+        const submitButton = document.querySelector('#commentForm button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = 'Enviando...';
+        submitButton.disabled = true;
+        
         // Get existing absence
         const absence = await getAbsenceById(absenceId);
         if (!absence) {
             alert('Falta no encontrada');
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
             return;
         }
         
         // Add comment to absence (in a real app, this would be a separate comments array)
-        const updatedComments = absence.comments ? 
-            `${absence.comments}\n\nComentario del alumno: ${commentText}` : 
+        const updatedComments = absence.comments ?
+            `${absence.comments}\n\nComentario del alumno: ${commentText}` :
             `Comentario del alumno: ${commentText}`;
         
         const updatedAbsence = {
@@ -181,6 +212,8 @@ async function handleCommentSubmit(e) {
         const result = await updateAbsence(absenceId, updatedAbsence);
         if (!result) {
             alert('Error al actualizar la falta');
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
             return;
         }
         
@@ -190,11 +223,22 @@ async function handleCommentSubmit(e) {
         // Reload absences history
         await loadAbsencesHistory();
         
+        // Reload absence dropdown
+        await loadAbsenceDropdown();
+        
         // Show success message
         alert('Comentario agregado correctamente');
+        
+        // Reset button state
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
     } catch (error) {
         console.error('Error handling comment submission:', error);
         alert('Error al agregar el comentario');
+        // Reset button state
+        const submitButton = document.querySelector('#commentForm button[type="submit"]');
+        submitButton.textContent = submitButton.textContent === 'Enviando...' ? 'Agregar Comentario' : submitButton.textContent;
+        submitButton.disabled = false;
     }
 }
 

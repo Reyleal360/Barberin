@@ -36,8 +36,20 @@
         
         <main class="main">
             <div class="dashboard-header">
-                <h1 class="dashboard-title">Panel del Profesor</h1>
-                <p class="dashboard-subtitle">Registra y gestiona las faltas de los estudiantes</p>
+                <div class="dashboard-header__content">
+                    <h1 class="dashboard-title">Panel del Profesor</h1>
+                    <p class="dashboard-subtitle">Registra y gestiona las faltas de los estudiantes</p>
+                </div>
+                <div class="dashboard-header__actions">
+                    <button id="helpBtn" class="btn btn--secondary" title="Ayuda y atajos de teclado">
+                        <span>❓</span>
+                        Ayuda
+                    </button>
+                    <button id="refreshDashboard" class="btn btn--secondary" title="Actualizar datos">
+                        <span id="refreshIcon">🔄</span>
+                        Actualizar
+                    </button>
+                </div>
             </div>
             
             <!-- Absence Statistics -->
@@ -435,6 +447,62 @@
             <div class="modal__footer">
                 <button class="btn btn--secondary" id="cancelEditAbsenceBtn">Cancelar</button>
                 <button class="btn btn--primary" id="saveEditAbsenceBtn">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title">Ayuda - Panel del Profesor</h3>
+                <button class="modal__close">&times;</button>
+            </div>
+            <div class="modal__body">
+                <div class="help-section">
+                    <h4>Atajos de Teclado</h4>
+                    <div class="keyboard-shortcuts">
+                        <div class="shortcut">
+                            <kbd>Ctrl</kbd> + <kbd>F</kbd>
+                            <span>Enfocar búsqueda de faltas</span>
+                        </div>
+                        <div class="shortcut">
+                            <kbd>Ctrl</kbd> + <kbd>R</kbd>
+                            <span>Actualizar datos del dashboard</span>
+                        </div>
+                        <div class="shortcut">
+                            <kbd>Esc</kbd>
+                            <span>Cerrar modales abiertos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <h4>Funcionalidades</h4>
+                    <ul>
+                        <li><strong>Registrar Falta:</strong> Complete el formulario para registrar una nueva falta</li>
+                        <li><strong>Buscar Estudiantes:</strong> Use el campo de búsqueda para filtrar estudiantes</li>
+                        <li><strong>Filtrar por Fecha:</strong> Seleccione rango de fechas para filtrar faltas</li>
+                        <li><strong>Editar Faltas:</strong> Haga clic en "Editar" en cualquier fila de la tabla</li>
+                        <li><strong>Ver Detalles:</strong> Haga clic en "Ver Detalle" para ver información completa del estudiante</li>
+                        <li><strong>Exportar CSV:</strong> Descargue todas las faltas en formato CSV</li>
+                        <li><strong>Actualizar:</strong> Mantenga los datos actualizados con el botón de refresh</li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h4>Validaciones</h4>
+                    <ul>
+                        <li>Todos los campos marcados como requeridos (*) son obligatorios</li>
+                        <li>La categoría debe tener al menos 2 caracteres</li>
+                        <li>La situación debe tener al menos 5 caracteres</li>
+                        <li>La sanción debe tener al menos 3 caracteres</li>
+                        <li>La fecha no puede ser futura</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" id="closeHelpBtn">Cerrar</button>
             </div>
         </div>
     </div>

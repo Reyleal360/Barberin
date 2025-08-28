@@ -17,6 +17,29 @@
     margin-bottom: 0;
 }
 
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.dashboard-header__content {
+    flex: 1;
+}
+
+.dashboard-header__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+/* Refresh button animation */
+.refresh-rotating {
+    animation: spin 1s ease-in-out infinite;
+}
+
 /* Statistics Cards */
 .stat-card {
     display: flex;
@@ -118,6 +141,16 @@
     box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25);
 }
 
+.form-control--error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control--error:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
 /* Action Buttons */
 .table__actions {
     display: flex;
@@ -158,6 +191,75 @@
 
 .table__action-btn--view:hover {
     background-color: #1976d2;
+}
+
+/* Loading Spinner Animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Button Loading State */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Help Modal Styles */
+.help-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.help-section h4 {
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+}
+
+.help-section ul {
+    list-style-type: disc;
+    padding-left: var(--spacing-lg);
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.5;
+}
+
+.keyboard-shortcuts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.shortcut {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--color-gray-100);
+    border-radius: var(--border-radius-sm);
+}
+
+.shortcut kbd {
+    background-color: var(--color-gray-200);
+    border: 1px solid var(--color-gray-300);
+    border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+    color: var(--color-gray-800);
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 2px 4px;
+    margin: 0 1px;
+}
+
+.shortcut span {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
 }
 
 /* Responsive Adjustments */
