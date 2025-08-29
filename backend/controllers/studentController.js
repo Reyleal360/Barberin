@@ -33,48 +33,50 @@ const createStudent = async (req, res) => {
   try {
     const { id, name, email, course_id, enrollment_date } = req.body;
     
+    console.log('Received student creation request:', { id, name, email, course_id, enrollment_date });
+    
     // Validate required fields
     if (!id || !name || !email || !course_id || !enrollment_date) {
+      console.log('Missing required fields');
       return res.status(400).json({ error: 'Missing required fields' });
     }
     
+    console.log('Checking if student already exists');
     // Check if student already exists
     const [existingStudent] = await db.execute('SELECT id FROM students WHERE id = ?', [id]);
+    console.log('Existing student check result:', existingStudent);
     if (existingStudent.length > 0) {
+      console.log('Student already exists');
       return res.status(409).json({ error: 'Student with this ID already exists' });
     }
     
+    console.log('Checking if user already exists');
     // Check if user already exists
     const [existingUser] = await db.execute('SELECT id FROM users WHERE id = ?', [id]);
+    console.log('Existing user check result:', existingUser);
     if (existingUser.length > 0) {
+      console.log('User already exists');
       return res.status(409).json({ error: 'User with this ID already exists' });
     }
     
-    // Start transaction
-    await db.execute('START TRANSACTION');
+    console.log('Inserting student record');
+    // Insert new student
+    const [studentResult] = await db.execute(
+      'INSERT INTO students (id, name, email, course_id, enrollment_date) VALUES (?, ?, ?, ?, ?)',
+      [id, name, email, course_id, enrollment_date]
+    );
+    console.log('Student record inserted:', studentResult);
     
-    try {
-      // Insert new student
-      const [studentResult] = await db.execute(
-        'INSERT INTO students (id, name, email, course_id, enrollment_date) VALUES (?, ?, ?, ?, ?)',
-        [id, name, email, course_id, enrollment_date]
-      );
-      
-      // Insert new user with role 'student'
-      const [userResult] = await db.execute(
-        'INSERT INTO users (id, username, role) VALUES (?, ?, ?)',
-        [id, email, 'student']
-      );
-      
-      // Commit transaction
-      await db.execute('COMMIT');
-      
-      res.status(201).json({ id, name, email, course_id, enrollment_date });
-    } catch (error) {
-      // Rollback transaction on error
-      await db.execute('ROLLBACK');
-      throw error;
-    }
+    console.log('Inserting user record');
+    // Insert new user with role 'student'
+    const [userResult] = await db.execute(
+      'INSERT INTO users (id, username, role) VALUES (?, ?, ?)',
+      [id, email, 'student']
+    );
+    console.log('User record inserted:', userResult);
+    
+    console.log('Student creation successful');
+    res.status(201).json({ id, name, email, course_id, enrollment_date });
   } catch (error) {
     console.error('Error creating student:', error);
     res.status(500).json({ error: 'Internal server error' });
