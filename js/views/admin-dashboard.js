@@ -315,8 +315,10 @@ async function saveStudent() {
             result = await updateStudent(id, updatedStudent);
         } else {
             // Create new student
+            // Generate a unique ID for the student (using timestamp)
+            const studentId = 'std' + Date.now();
             const newStudent = {
-                id: 'student-' + Date.now(),
+                id: studentId,
                 name: name,
                 email: email,
                 course_id: course,

@@ -39,18 +39,42 @@ const createStudent = async (req, res) => {
     }
     
     // Check if student already exists
-    const [existing] = await db.execute('SELECT id FROM students WHERE id = ?', [id]);
-    if (existing.length > 0) {
+    const [existingStudent] = await db.execute('SELECT id FROM students WHERE id = ?', [id]);
+    if (existingStudent.length > 0) {
       return res.status(409).json({ error: 'Student with this ID already exists' });
     }
     
-    // Insert new student
-    const [result] = await db.execute(
-      'INSERT INTO students (id, name, email, course_id, enrollment_date) VALUES (?, ?, ?, ?, ?)',
-      [id, name, email, course_id, enrollment_date]
-    );
+    // Check if user already exists
+    const [existingUser] = await db.execute('SELECT id FROM users WHERE id = ?', [id]);
+    if (existingUser.length > 0) {
+      return res.status(409).json({ error: 'User with this ID already exists' });
+    }
     
-    res.status(201).json({ id, name, email, course_id, enrollment_date });
+    // Start transaction
+    await db.execute('START TRANSACTION');
+    
+    try {
+      // Insert new student
+      const [studentResult] = await db.execute(
+        'INSERT INTO students (id, name, email, course_id, enrollment_date) VALUES (?, ?, ?, ?, ?)',
+        [id, name, email, course_id, enrollment_date]
+      );
+      
+      // Insert new user with role 'student'
+      const [userResult] = await db.execute(
+        'INSERT INTO users (id, username, role) VALUES (?, ?, ?)',
+        [id, email, 'student']
+      );
+      
+      // Commit transaction
+      await db.execute('COMMIT');
+      
+      res.status(201).json({ id, name, email, course_id, enrollment_date });
+    } catch (error) {
+      // Rollback transaction on error
+      await db.execute('ROLLBACK');
+      throw error;
+    }
   } catch (error) {
     console.error('Error creating student:', error);
     res.status(500).json({ error: 'Internal server error' });
