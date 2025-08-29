@@ -113,6 +113,23 @@ async function loadAbsencesHistory(studentId) {
                     break;
             }
             
+            // Extract student comment from comments
+            let studentComment = '';
+            let otherComments = '';
+            
+            if (absence.comments) {
+                const commentLines = absence.comments.split('\n');
+                const studentCommentIndex = commentLines.findIndex(line => line.includes('Comentario del alumno:'));
+                if (studentCommentIndex !== -1) {
+                    studentComment = commentLines[studentCommentIndex].replace('Comentario del alumno:', '').trim();
+                    // Remove the student comment line from other comments
+                    commentLines.splice(studentCommentIndex, 1);
+                    otherComments = commentLines.filter(line => line.trim() !== '').join('\n');
+                } else {
+                    otherComments = absence.comments;
+                }
+            }
+            
             card.innerHTML = `
                 <div class="absence-card__header">
                     <h3 class="absence-card__title">${typeLabel}</h3>
@@ -135,10 +152,24 @@ async function loadAbsencesHistory(studentId) {
                         <div class="absence-card__label">Sanción</div>
                         <div class="absence-card__value">${absence.sanction}</div>
                     </div>
+                    ${studentComment ? `
+                    <div class="absence-card__item absence-card__comments">
+                        <div class="absence-card__label">Comentario del Alumno</div>
+                        <div class="absence-card__value">${studentComment}</div>
+                    </div>
+                    ` : ''}
+                    ${otherComments ? `
+                    <div class="absence-card__item absence-card__comments">
+                        <div class="absence-card__label">Comentarios del Profesor</div>
+                        <div class="absence-card__value">${otherComments}</div>
+                    </div>
+                    ` : ''}
+                    ${!studentComment && !otherComments ? `
                     <div class="absence-card__item absence-card__comments">
                         <div class="absence-card__label">Comentarios</div>
-                        <div class="absence-card__value">${absence.comments || 'Sin comentarios'}</div>
+                        <div class="absence-card__value">Sin comentarios</div>
                     </div>
+                    ` : ''}
                 </div>
                 <div class="absence-card__actions">
                     <button class="absence-card__action-btn absence-card__action-btn--edit" data-edit="${absence.id}">

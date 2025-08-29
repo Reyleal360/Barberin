@@ -57,13 +57,20 @@ const createAbsence = async (req, res) => {
       return res.status(409).json({ error: 'Absence with this ID already exists' });
     }
     
+    // Format date for MySQL if it's an ISO string
+    let formattedDate = date;
+    if (date && typeof date === 'string' && date.includes('T')) {
+      // Extract just the date part from ISO string (YYYY-MM-DD)
+      formattedDate = date.split('T')[0];
+    }
+    
     // Insert new absence
     const [result] = await db.execute(
       'INSERT INTO absences (id, student_id, course_id, type, category, situation, sanction, date, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [id, student_id, course_id, type, category, situation, sanction, date, comments || null]
+      [id, student_id, course_id, type, category, situation, sanction, formattedDate, comments || null]
     );
     
-    res.status(201).json({ id, student_id, course_id, type, category, situation, sanction, date, comments });
+    res.status(201).json({ id, student_id, course_id, type, category, situation, sanction, date: formattedDate, comments });
   } catch (error) {
     console.error('Error creating absence:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -82,13 +89,20 @@ const updateAbsence = async (req, res) => {
       return res.status(404).json({ error: 'Absence not found' });
     }
     
+    // Format date for MySQL if it's an ISO string
+    let formattedDate = date;
+    if (date && typeof date === 'string' && date.includes('T')) {
+      // Extract just the date part from ISO string (YYYY-MM-DD)
+      formattedDate = date.split('T')[0];
+    }
+    
     // Update absence
     const [result] = await db.execute(
       'UPDATE absences SET student_id = ?, course_id = ?, type = ?, category = ?, situation = ?, sanction = ?, date = ?, comments = ? WHERE id = ?',
-      [student_id, course_id, type, category, situation, sanction, date, comments || null, id]
+      [student_id, course_id, type, category, situation, sanction, formattedDate, comments || null, id]
     );
     
-    res.status(200).json({ id, student_id, course_id, type, category, situation, sanction, date, comments });
+    res.status(200).json({ id, student_id, course_id, type, category, situation, sanction, date: formattedDate, comments });
   } catch (error) {
     console.error('Error updating absence:', error);
     res.status(500).json({ error: 'Internal server error' });

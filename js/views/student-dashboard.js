@@ -90,13 +90,34 @@ async function loadAbsencesHistory() {
             
             const row = document.createElement('tr');
             
+            // Extract student comment from comments
+            let studentComment = '';
+            let otherComments = '';
+            
+            if (absence.comments) {
+                const commentLines = absence.comments.split('\n');
+                const studentCommentIndex = commentLines.findIndex(line => line.includes('Comentario del alumno:'));
+                if (studentCommentIndex !== -1) {
+                    studentComment = commentLines[studentCommentIndex].replace('Comentario del alumno:', '').trim();
+                    // Remove the student comment line from other comments
+                    commentLines.splice(studentCommentIndex, 1);
+                    otherComments = commentLines.filter(line => line.trim() !== '').join('\n');
+                } else {
+                    otherComments = absence.comments;
+                }
+            }
+            
             row.innerHTML = `
                 <td>${course ? course.name : 'Curso no encontrado'}</td>
                 <td>${getAbsenceTypeLabel(absence.type)}</td>
                 <td>${absence.date}</td>
                 <td>${absence.situation}</td>
                 <td>${absence.sanction}</td>
-                <td>${absence.comments || ''}</td>
+                <td>
+                    ${studentComment ? `<div><strong>Alumno:</strong> ${studentComment}</div>` : ''}
+                    ${otherComments ? `<div><strong>Profesor:</strong> ${otherComments}</div>` : ''}
+                    ${!studentComment && !otherComments ? 'Sin comentarios' : ''}
+                </td>
             `;
             
             tableBody.appendChild(row);
