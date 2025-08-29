@@ -179,7 +179,7 @@ async function handleCommentSubmit(e) {
         
         // Validate input
         if (!absenceId || !commentText) {
-            alert('Por favor selecciona una falta y escribe un comentario');
+            showMessage('Por favor selecciona una falta y escribe un comentario', 'error');
             return;
         }
         
@@ -192,7 +192,7 @@ async function handleCommentSubmit(e) {
         // Get existing absence
         const absence = await getAbsenceById(absenceId);
         if (!absence) {
-            alert('Falta no encontrada');
+            showMessage('Falta no encontrada', 'error');
             submitButton.textContent = originalText;
             submitButton.disabled = false;
             return;
@@ -211,7 +211,7 @@ async function handleCommentSubmit(e) {
         // Update absence
         const result = await updateAbsence(absenceId, updatedAbsence);
         if (!result) {
-            alert('Error al actualizar la falta');
+            showMessage('Error al actualizar la falta', 'error');
             submitButton.textContent = originalText;
             submitButton.disabled = false;
             return;
@@ -227,18 +227,20 @@ async function handleCommentSubmit(e) {
         await loadAbsenceDropdown();
         
         // Show success message
-        alert('Comentario agregado correctamente');
+        showMessage('Comentario agregado correctamente', 'success');
         
         // Reset button state
         submitButton.textContent = originalText;
         submitButton.disabled = false;
     } catch (error) {
         console.error('Error handling comment submission:', error);
-        alert('Error al agregar el comentario');
+        showMessage('Error al agregar el comentario. Por favor, inténtalo de nuevo.', 'error');
         // Reset button state
         const submitButton = document.querySelector('#commentForm button[type="submit"]');
-        submitButton.textContent = submitButton.textContent === 'Enviando...' ? 'Agregar Comentario' : submitButton.textContent;
-        submitButton.disabled = false;
+        if (submitButton) {
+            submitButton.textContent = submitButton.textContent === 'Enviando...' ? 'Agregar Comentario' : submitButton.textContent;
+            submitButton.disabled = false;
+        }
     }
 }
 
@@ -275,4 +277,78 @@ function getCurrentUser() {
 function logout() {
     localStorage.removeItem('ieve_currentUser');
     window.location.href = 'login.html';
+}
+
+/**
+ * Show message in HTML element
+ * @param {string} message - Message to display
+ * @param {string} type - Type of message (success, error, info)
+ */
+function showMessage(message, type) {
+    // Create or get message container
+    let messageContainer = document.getElementById('messageContainer');
+    if (!messageContainer) {
+        messageContainer = document.createElement('div');
+        messageContainer.id = 'messageContainer';
+        messageContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 300px;
+            min-width: 250px;
+        `;
+        document.body.appendChild(messageContainer);
+    }
+
+    // Create message element
+    const messageEl = document.createElement('div');
+    messageEl.style.cssText = `
+        background-color: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
+        color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
+        border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : '#bee5eb'};
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        position: relative;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
+
+    messageEl.innerHTML = `
+        <span style="font-weight: bold;">${type.charAt(0).toUpperCase() + type.slice(1)}:</span> ${message}
+        <button onclick="this.parentElement.remove()" style="
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: inherit;
+            opacity: 0.7;
+        ">&times;</button>
+    `;
+
+    messageContainer.appendChild(messageEl);
+
+    // Show message with animation
+    setTimeout(() => {
+        messageEl.style.opacity = '1';
+    }, 10);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (messageEl.parentElement) {
+            messageEl.style.opacity = '0';
+            setTimeout(() => {
+                if (messageEl.parentElement) {
+                    messageEl.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
 }

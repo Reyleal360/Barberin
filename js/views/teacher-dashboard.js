@@ -1355,50 +1355,70 @@ function updateGeneralAbsenceStats() {
  * Create or update absence chart
  */
 function updateAbsenceChart() {
-    const ctx = document.getElementById('absenceChart').getContext('2d');
-    
-    // Calculate absence statistics
-    const stats = calculateAbsenceStats();
-    
-    // Destroy existing chart if it exists
-    if (window.absenceChart) {
-        window.absenceChart.destroy();
-    }
-    
-    // Create new chart
-    window.absenceChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Tardanzas', 'Ausencias Justificadas', 'Ausencias Injustificadas'],
-            datasets: [{
-                label: 'Número de Faltas',
-                data: [stats.tardiness, stats.justified, stats.unjustified],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            responsive: true,
-            maintainAspectRatio: false
+    try {
+        const ctx = document.getElementById('absenceChart');
+        if (!ctx) {
+            console.warn('Chart canvas element not found');
+            return;
         }
-    });
+        
+        const ctx2d = ctx.getContext('2d');
+        if (!ctx2d) {
+            console.warn('Unable to get 2D context for chart');
+            return;
+        }
+        
+        // Calculate absence statistics
+        const stats = calculateAbsenceStats();
+        
+        // Destroy existing chart if it exists
+        if (window.absenceChart) {
+            window.absenceChart.destroy();
+        }
+        
+        // Create new chart
+        window.absenceChart = new Chart(ctx2d, {
+            type: 'bar',
+            data: {
+                labels: ['Tardanzas', 'Ausencias Justificadas', 'Ausencias Injustificadas'],
+                datasets: [{
+                    label: 'Número de Faltas',
+                    data: [stats.tardiness, stats.justified, stats.unjustified],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    } catch (error) {
+        console.error('Error creating absence chart:', error);
+        // Show error message in chart container
+        const chartContainer = document.getElementById('absenceChart')?.parentElement;
+        if (chartContainer) {
+            chartContainer.innerHTML = '<p class="text-error text-center">Error al cargar el gráfico</p>';
+        }
+    }
 }
 
 /**
